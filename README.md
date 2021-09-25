@@ -1,1 +1,1 @@
-# juno_reacT_project
+# juno_react_project
