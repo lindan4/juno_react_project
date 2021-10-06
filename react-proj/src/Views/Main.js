@@ -1,21 +1,16 @@
 import React, { Component } from 'react'
-import { Grid, IconButton, Paper, TextField } from '@mui/material';
+import { Grid, IconButton, Paper, TextField, Typography } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import SearchBar from '../Components/SearchBar';
+import axios from 'axios'
+import { SearchBar, RandomRecipeItem } from '../Components';
+
 
 
 class Main extends Component {
 
     constructor(props) {
-        super(props)
-        
-
-        this.state = {
-            searchInput: ''
-        }
-
+        super(props)        
     }
-
 
     render() {
         return (
@@ -34,8 +29,12 @@ class Main extends Component {
                         {/* Navigation pane */}
                     </Grid>
                     <Grid item>
-                        {/* Main page content */}
                         {/* Random featured recipe */}
+                        <RandomRecipeItem />
+
+                    </Grid>
+                    <Grid item>
+                        {/* Main page content */}
                     </Grid>
                 </Grid>
             </div>

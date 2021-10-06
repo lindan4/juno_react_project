@@ -34,4 +34,4 @@ const SearchBar = ({ onSearchPress = () => {} }) => {
 };
 
 
-export default SearchBar
+export { SearchBar }
