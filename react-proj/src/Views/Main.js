@@ -22,8 +22,7 @@ class Main extends Component {
                     <Grid item sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                         {/* Search bar */}
                         <SearchBar onSearchPress={value => {
-                            console.log(value)
-                            this.props.history.push('/searchresults')
+                            this.props.history.push(`/search?keyword=${value}`)
                         }}/>
 
                     

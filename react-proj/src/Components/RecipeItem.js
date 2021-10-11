@@ -1,9 +1,9 @@
 import { Card, CardActionArea, CardContent, CardMedia, Typography } from "@mui/material"
 
-const RecipeItem = ({ item }) => {
+const RecipeItem = ({ item, onItemClick = () => {} }) => {
     return (
         <Card sx={{ width: 200 }}>
-            <CardActionArea>
+            <CardActionArea onClick={onItemClick}>
                 <CardMedia component='img' src={item.strMealThumb} />
                 <CardContent>
                     <Typography variant='h5' component='h6'>{item.strMeal}</Typography>

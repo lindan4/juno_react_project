@@ -1,6 +1,7 @@
 import { Grid, Typography } from '@mui/material'
 import axios from 'axios'
 import { Component } from 'react'
+import { useParams } from 'react-router'
 import { RecipeItem } from '../Components'
 
 
@@ -17,7 +18,10 @@ class SearchResults extends Component {
     }
 
     componentDidMount() {
-        axios.get('https://www.themealdb.com/api/json/v1/1/search.php?s=ha').then(searchRes => {
+        const urlParams = new URLSearchParams(this.props.location.search)
+        const keyword = urlParams.get('keyword')
+        console.log(keyword)
+        axios.get(`https://www.themealdb.com/api/json/v1/1/search.php?s=${keyword}`).then(searchRes => {
             this.setState({ searchResults: searchRes.data.meals })
         })
     }
@@ -26,7 +30,7 @@ class SearchResults extends Component {
     render() {
         return (
             <div className="search-results-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                <Grid>
+                <Grid container display='flex' alignItems='center' direction="column">
                     <Grid item>
                         <Typography>There are {this.state.searchResults.length} results</Typography>
                     </Grid>
@@ -37,7 +41,9 @@ class SearchResults extends Component {
                         alignItems="flex-start"
                         width='60%'>
                         {
-                            this.state.searchResults.map(searchResultItem => <RecipeItem item={searchResultItem} />)
+                            this.state.searchResults.map(searchResultItem => <RecipeItem item={searchResultItem} onItemPress={() => {
+                                this.props.history.push(`/meal?id=${searchResultItem.idMeal}`)
+                            }} />)
                         }
 
                     </Grid>
