@@ -24,17 +24,16 @@ class MealInfo extends Component {
 
         const mealDataEntries = Object.entries(mealData);
 
-        const ingredientQuantities = Object.values(
-          mealDataEntries.filter(([key, value]) => key.startsWith("strMeasure"))
-        );
+        const ingredientQuantities = Object.values(mealDataEntries.filter(([key, value]) => key.startsWith("strMeasure") && value !== ''));
+
         const ingredientNames = Object.values(
           mealDataEntries.filter(([key, value]) =>
-            key.startsWith("strIngredient")
+            key.startsWith("strIngredient") && value !== ''
           )
         );
 
         const ingredients = ingredientNames.map((item, index) => {
-          return [item, ingredientQuantities[index]];
+          return [item[1], ingredientQuantities[index][1]];
         });
 
         this.setState({ mealInfo: mealData, mealIngredients: ingredients });
@@ -48,7 +47,7 @@ class MealInfo extends Component {
           {ingredients.map(([name, quantity]) => {
             return (
               <li>
-                {quantity} {name}
+                {quantity} of {name}
               </li>
             );
           })}
@@ -58,9 +57,28 @@ class MealInfo extends Component {
   }
 
   renderSteps() {
-    const steps = this.state.mealInfo.strInstructions;
 
-    return <p>{steps}</p>;
+    if (this.state.mealInfo.strInstructions !== undefined) {
+      // const steps = this.state.mealInfo.strInstructions
+
+      const steps = JSON.stringify(this.state.mealInfo.strInstructions).split('\\r\\n')
+
+      console.log(steps)
+
+      // console.log(this.state.mealInfo)
+
+      // const domParser = new DOMParser()
+
+      // const parsedSteps = domParser.parseFromString(steps, 'text/html')
+      // console.log(steps)
+
+      return steps.map((item, index) => {
+        return <p>{index + 1}. {item}</p>
+        
+      });
+
+    }
+    
   }
 
   render() {
@@ -76,7 +94,7 @@ class MealInfo extends Component {
         <Grid container display="flex" alignItems="center" direction="column">
           <Grid item>
             <img
-              src={mealInfo.strMealThumb}
+              src={this.state.mealInfo.strMealThumb}
               style={{
                 borderTopRightRadius: 10,
                 borderBottomRightRadius: 10,
@@ -85,7 +103,7 @@ class MealInfo extends Component {
             />
           </Grid>
           <Grid item>
-            <h2>{mealInfo.strMeal}</h2>
+            <h2>{this.state.mealInfo.strMeal}</h2>
             <div>
               <div>
                 <h6>Ingredients</h6>

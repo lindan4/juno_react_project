@@ -41,7 +41,8 @@ class SearchResults extends Component {
                         alignItems="flex-start"
                         width='60%'>
                         {
-                            this.state.searchResults.map(searchResultItem => <RecipeItem item={searchResultItem} onItemPress={() => {
+                            this.state.searchResults.map(searchResultItem => <RecipeItem key={searchResultItem.idMeal} item={searchResultItem} onItemClick={() => {
+                                console.log('Clicked')
                                 this.props.history.push(`/meal?id=${searchResultItem.idMeal}`)
                             }} />)
                         }
