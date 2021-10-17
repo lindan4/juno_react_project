@@ -6,9 +6,10 @@ import Main from './Views/Main';
 import SearchResults from './Views/SearchResults';
 import MealInfo from './Views/MealInfo';
 import { Menu } from '@mui/icons-material';
+import { Dashboard } from './Components';
 
 
-const renderAppRoute = ({ exact, path, component: Component }) => {
+const AppRoute = ({ exact, path, component: Component }) => {
 
 
   return (
@@ -17,10 +18,7 @@ const renderAppRoute = ({ exact, path, component: Component }) => {
       path={path}
       render={(props) => (
         <div>
-          <IconButton edge='start' className={drawThemes.menuButton} color='black' aria-label="menu" onClick={() => setShowDrawer(true)}>
-            <Menu style={{ color: 'black' }} />
-          </IconButton>
-          
+          <Dashboard />
           <Component {...props} />
         </div>
       )}
@@ -34,9 +32,9 @@ const renderAppRoute = ({ exact, path, component: Component }) => {
 function App() {
   return (
     <Switch>
-      <Route exact path="/" component={Main} />
-      <Route path='/search' component={SearchResults} />
-      <Route path='/meal' component={MealInfo} />
+      <AppRoute exact path="/" component={Main} />
+      <AppRoute path='/search' component={SearchResults} />
+      <AppRoute path='/meal' component={MealInfo} />
     </Switch>
   );
 }
