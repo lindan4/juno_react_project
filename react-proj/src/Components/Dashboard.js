@@ -2,17 +2,21 @@ import { MenuOutlined } from "@mui/icons-material";
 import { Button, IconButton, Link, Menu, MenuItem, Modal, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser, signUpUser } from "../api/User";
 
-const Dashboard = ({ loggedIn = false, onProfileClick, onFavouriteClick, onSignClick }) => {
+const Dashboard = ({ onProfileClick, onFavouriteClick, onSignClick }) => {
 
   const dispatch = useDispatch()
   
   const [anchorEl, setAnchorEl] = useState(null);
   const [showLoginModal, setShowLoginModal] =  useState(false)
 
+  const loggedIn = useSelector(state => state.user.loggedIn)
+
   const [showSignupPage, setShowSignupPage] = useState(false)
 
+  const [name, setName] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -58,9 +62,11 @@ const Dashboard = ({ loggedIn = false, onProfileClick, onFavouriteClick, onSignC
   }
 
   const renderLoginContent = () => {
-    if (!loggedIn && !showSignupPage) {
-      return (
-        <Box sx={styles.modalStyle}>
+
+    if (!loggedIn) {
+      if (!showSignupPage) {
+        return (
+          <Box sx={styles.modalStyle}>
             <Typography variant="h6" component="h2">
               Login
             </Typography>
@@ -68,33 +74,50 @@ const Dashboard = ({ loggedIn = false, onProfileClick, onFavouriteClick, onSignC
             
               <TextField sx={{ marginTop: 4 }}  id="Email-field" label="Email" variant="outlined" value={username} type='email' onChange={event => setUsername(event.target.value)} />
               <TextField sx={{ marginTop: 2 }} id="password-field" label="Password" variant="outlined" value={password} type='password' onChange={event => setPassword(event.target.value)}/>
-              <Button sx={{ marginTop: 2 }} variant='contained' id='login-button'>Login</Button>
+              <Button sx={{ marginTop: 2 }} variant='contained' id='login-button' onClick={() => {
+                 loginUser(username, password).then(() => {
+                   showLoginModal(false)
+                   setUsername('')
+                   setPassword('')
+                 })
+                }} >Login</Button>
               <Typography>{errorMessage}</Typography>
             </Box>
 
             <Typography variant="h6" component="h2" sx={{ mt: 6 }}>
               Don't have an account? Click <Link onClick={() => setShowSignupPage(true)}>here</Link> to sign up.
             </Typography>
-        </Box>
-      )
-    }
-    else {
-      return (
-        <Box sx={styles.modalStyle}>
+          </Box>
+        )
+
+      }
+      else {
+        return (
+          <Box sx={styles.modalStyle}>
           <Typography variant="h6" component="h2">
                 Sign Up
           </Typography>
           <Button variant='text' onClick={() => setShowSignupPage(false)}>Back</Button>
           <Box sx={{ marginTop: 1, alignItems: 'flex-start', display: 'flex', flexDirection: 'column' }}> 
-            
-              <TextField sx={{ marginTop: 4 }}  id="Email-field" label="Email" variant="outlined" value={username} type='email' onChange={event => setUsername(event.target.value)} />
-              <TextField sx={{ marginTop: 2 }} id="password-field" label="Password" variant="outlined" value={password} type='password' onChange={event => setUsername(event.target.value)}/>
-              <Button sx={{ marginTop: 2 }} variant='contained' id='login-button'>Sign Up</Button>
+              <TextField sx={{ marginTop: 4 }}  id="name-field" label="Name" variant="outlined" value={name} onChange={event => setName(event.target.value)} />
+              <TextField sx={{ marginTop: 2 }}  id="email-field" label="Email" variant="outlined" value={username} type='email' onChange={event => setUsername(event.target.value)} />
+              <TextField sx={{ marginTop: 2 }} id="password-field" label="Password" variant="outlined" value={password} type='password' onChange={event => setPassword(event.target.value)}/>
+              <Button sx={{ marginTop: 2 }} variant='contained' id='login-button' onClick={() => {
+                signUpUser(username, password, name).then(() => {
+                  setShowLoginModal(false)
+                  setShowSignupPage(false)
+                  alert('Success in creating account')
+                }).catch(error => {
+                  alert('Error when creating account')
+                  console.log(error)
+                })
+              }} >Sign Up</Button>
             </Box>
         </Box>
-      )
-
+        )
+      }
     }
+    
 
   }
 
