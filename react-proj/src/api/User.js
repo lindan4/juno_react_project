@@ -1,6 +1,4 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { useDispatch } from "react-redux";
-import { setLoginStatus, setUserInfo } from "../redux/UserSlice";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import app from '../firebase'
 import { collection, addDoc, getDoc, setDoc, doc } from "firebase/firestore"; 
@@ -11,19 +9,20 @@ const db = getFirestore(app)
 const auth = getAuth(app)
 
 
+const userRef = collection(db, 'users') 
+
+
 export const signUpUser = (email, password, name) => {
 
     return new Promise((resolve, reject) => {
         createUserWithEmailAndPassword(auth, email, password).then(credentials => {
             const user = credentials.user
 
-            setDoc(doc(db, 'users', user.uid), {
+            setDoc(doc(userRef, user.uid), {
                 name
             }).then(() => {
-                store.dispatch(setLoginStatus(true))
-                store.dispatch(setUserInfo({ name, uid: user.uid }))
 
-                resolve()
+                resolve({ username: name, uid: user.uid })
 
             }).catch(error => reject(error))
             
@@ -39,16 +38,14 @@ export const loginUser = (email, password) => {
         signInWithEmailAndPassword(auth, email, password).then(credentials => {
             const user = credentials.user
 
-            getDoc(doc(db, 'users'), user.uid).then(doc => {
-                if (doc.exists) {
+            getDoc(doc(userRef, user.uid)).then(doc => {
+                if (doc.exists()) {
                     const data = doc.data()
-                    console.log("Document data:", data);
-                    store.dispatch(setLoginStatus(true))
-                    store.dispatch(setUserInfo(data))
-                    resolve()
+                    resolve({...data, uid: user.uid})
                 }
                 else {
                     console.log("No such document!");
+                    reject('')
                 }
                 
 
@@ -57,6 +54,12 @@ export const loginUser = (email, password) => {
         }).catch(error => reject(error))
 
     })
-    
+}
 
+export const logoutUser = () => {
+    return new Promise((resolve, reject) => {
+        signOut(auth).then(() => {
+            resolve()
+        }).catch(error => reject(error))
+    })
 }

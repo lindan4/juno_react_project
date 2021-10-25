@@ -1,28 +1,32 @@
 import { createSlice } from '@reduxjs/toolkit'
 
+const initialState = {
+    name: '',
+    uid: '',
+    userFavourites: [],
+    loggedIn: false
+
+}
+
 export const userSlice = createSlice({
-    name: 'User',
-    initialState: {
-        userInfo: {},
-        userFavourites: {},
-        loggedIn: false
-    },
+    name: 'user',
+    initialState,
     reducers: {
-        setUserInfo: (state, action) => {
-            return {
-                ...state,
-                userInfo: action.payload
-            }
+        setReduxName: (state, action) => {
+           state.userInfo = action.payload
+        },
+        setUserId: (state, action) => {
+            state.uid = action.payload
+        },
+        setUserFavourites: (state, action) => {
+            state.userFavourites = action.payload
         },
         setLoginStatus: (state, action) => {
-            return {
-                ...state,
-                loggedIn: action.payload
-            }
+           state.loggedIn = action.payload
         }
     }
 })
 
-export const { setUserInfo, setLoginStatus } = userSlice.actions
+export const { setReduxName, setUserId, setUserFavourites, setLoginStatus } = userSlice.actions
 
 export default userSlice.reducer

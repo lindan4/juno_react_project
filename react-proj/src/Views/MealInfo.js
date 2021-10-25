@@ -1,6 +1,7 @@
-import { Grid } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import axios from "axios";
 import { Component } from "react";
+import { connect } from "react-redux";
 
 class MealInfo extends Component {
   constructor(props) {
@@ -59,18 +60,9 @@ class MealInfo extends Component {
   renderSteps() {
 
     if (this.state.mealInfo.strInstructions !== undefined) {
-      // const steps = this.state.mealInfo.strInstructions
-
       const steps = JSON.stringify(this.state.mealInfo.strInstructions).split('\\r\\n')
 
       console.log(steps)
-
-      // console.log(this.state.mealInfo)
-
-      // const domParser = new DOMParser()
-
-      // const parsedSteps = domParser.parseFromString(steps, 'text/html')
-      // console.log(steps)
 
       return steps.map((item, index) => {
         return <p>{index + 1}. {item}</p>
@@ -101,6 +93,7 @@ class MealInfo extends Component {
                 height: "100%",
               }}
             />
+            <Button variant='contained'></Button>
           </Grid>
           <Grid item>
             <h2>{this.state.mealInfo.strMeal}</h2>
@@ -121,4 +114,16 @@ class MealInfo extends Component {
   }
 }
 
-export default MealInfo;
+const mapStateToProps = state => {
+  const { userFavourites } = state.user
+
+  return { userFavourites }
+
+}
+
+
+const mapDispatchToProps = {
+
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MealInfo);

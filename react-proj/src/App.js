@@ -32,9 +32,9 @@ const AppRoute = ({ exact, path, component: Component }) => {
 function App() {
   return (
     <Switch>
-      <AppRoute exact path="/" component={Main} />
       <AppRoute path='/search' component={SearchResults} />
       <AppRoute path='/meal' component={MealInfo} />
+      <AppRoute path="/" component={Main} />
     </Switch>
   );
 }
