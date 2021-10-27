@@ -1,7 +1,10 @@
-import { Button, Grid } from "@mui/material";
+import { Favorite, FavoriteOutlined } from "@mui/icons-material";
+import { Button, Grid, IconButton } from "@mui/material";
 import axios from "axios";
 import { Component } from "react";
 import { connect } from "react-redux";
+import { addToFavouriteFBStore, removeFromFavouriteFBStore } from "../api/User";
+import { addFavouriteById, removeFavouriteById } from '../redux/UserSlice'
 
 class MealInfo extends Component {
   constructor(props) {
@@ -10,7 +13,11 @@ class MealInfo extends Component {
     this.state = {
       mealInfo: {},
       mealIngredients: [],
+      isFavourited: false
     };
+
+    this.addToFavourite = this.addToFavourite.bind(this)
+    this.removeFromFavourite = this.removeFromFavourite.bind(this)
   }
 
   componentDidMount() {
@@ -62,8 +69,6 @@ class MealInfo extends Component {
     if (this.state.mealInfo.strInstructions !== undefined) {
       const steps = JSON.stringify(this.state.mealInfo.strInstructions).split('\\r\\n')
 
-      console.log(steps)
-
       return steps.map((item, index) => {
         return <p>{index + 1}. {item}</p>
         
@@ -73,17 +78,59 @@ class MealInfo extends Component {
     
   }
 
+  addToFavourite() {
+    const mealId = this.state.mealInfo.idMeal
+
+    addToFavouriteFBStore(mealId).then(() => {
+      this.props.addFavouriteById(mealId)
+      this.setState({ isFavourited: true })
+    })
+
+
+  }
+
+  removeFromFavourite() {
+    const mealId = this.state.mealInfo.idMeal
+
+    removeFromFavouriteFBStore(mealId).then(() => {
+      this.props.removeFavouriteById(mealId)
+      this.setState({ isFavourited: false })
+    })
+  }
+
+  renderFavouriteButton() {
+    const mealId = this.state.mealInfo.idMeal
+
+    if (this.props.userFavourites.includes(mealId)) {
+      return (
+        <IconButton onClick={this.removeFromFavourite}>
+          <Favorite sx={{ color: 'pink' }} />
+        </IconButton>
+      )
+    }
+    else {
+      return (
+        <IconButton onClick={this.addToFavourite}>
+          <FavoriteOutlined  sx={{ color: 'none' }}/>
+        </IconButton>
+      )
+    }
+  }
+
   render() {
+
+    console.log(this.props.userFavourites)
+
     return (
       <div
         className="search-results-container"
         style={{
           display: "flex",
           flexDirection: "row",
-          justifyContent: "center",
+          justifyContent: "center"
         }}
       >
-        <Grid container display="flex" alignItems="center" direction="column">
+        <Grid container display="flex" alignItems="center" direction="column" width='80%'>
           <Grid item>
             <img
               src={this.state.mealInfo.strMealThumb}
@@ -93,10 +140,12 @@ class MealInfo extends Component {
                 height: "100%",
               }}
             />
-            <Button variant='contained'></Button>
           </Grid>
-          <Grid item>
-            <h2>{this.state.mealInfo.strMeal}</h2>
+          <Grid item sx={{ paddingBottom: 20 }}>
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                <h2>{this.state.mealInfo.strMeal}</h2>
+                {this.renderFavouriteButton()}
+            </div>
             <div>
               <div>
                 <h6>Ingredients</h6>
@@ -123,7 +172,8 @@ const mapStateToProps = state => {
 
 
 const mapDispatchToProps = {
-
+    addFavouriteById,
+    removeFavouriteById
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MealInfo);

@@ -1,7 +1,6 @@
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, collection, addDoc, getDoc, setDoc, doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import app from '../firebase'
-import { collection, addDoc, getDoc, setDoc, doc } from "firebase/firestore"; 
 import store from '../store'
 
 
@@ -11,6 +10,35 @@ const auth = getAuth(app)
 
 const userRef = collection(db, 'users') 
 
+export const addToFavouriteFBStore = (id) => {
+
+    const userId = auth.currentUser.uid
+
+    return new Promise((resolve, reject) => {
+
+        updateDoc(doc(userRef, userId), {
+            favourites: arrayUnion(id)
+        }).then(() => resolve()).catch(error => reject(error))
+
+    })
+    
+
+}
+
+export const removeFromFavouriteFBStore = (id) => {
+
+    return new Promise((resolve, reject) => {
+
+        const userId = auth.currentUser.uid
+
+
+        updateDoc(doc(userRef, userId), {
+            favourites: arrayRemove(id)
+        }).then(() => resolve()).catch(error => reject(error))
+
+    })
+
+}
 
 export const signUpUser = (email, password, name) => {
 
@@ -28,29 +56,13 @@ export const signUpUser = (email, password, name) => {
             
         }).catch(error => reject(error))
 
-    })
-    
+    })   
 }
 
 export const loginUser = (email, password) => {
-
     return new Promise((resolve, reject) => {
         signInWithEmailAndPassword(auth, email, password).then(credentials => {
-            const user = credentials.user
-
-            getDoc(doc(userRef, user.uid)).then(doc => {
-                if (doc.exists()) {
-                    const data = doc.data()
-                    resolve({...data, uid: user.uid})
-                }
-                else {
-                    console.log("No such document!");
-                    reject('')
-                }
-                
-
-            }).catch(error => reject(error))
-            
+            resolve(credentials) 
         }).catch(error => reject(error))
 
     })

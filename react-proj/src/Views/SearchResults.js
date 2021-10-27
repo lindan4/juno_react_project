@@ -22,8 +22,13 @@ class SearchResults extends Component {
         const keyword = urlParams.get('keyword')
         console.log(keyword)
         axios.get(`https://www.themealdb.com/api/json/v1/1/search.php?s=${keyword}`).then(searchRes => {
-            this.setState({ searchResults: searchRes.data.meals })
-        })
+            if (searchRes.data.meals) {
+                this.setState({ searchResults: searchRes.data.meals })
+            }
+            else {
+                this.setState({ searchResults: [] })
+            }
+        }).catch(error => console.log(error))
     }
 
 
@@ -32,7 +37,7 @@ class SearchResults extends Component {
             <div className="search-results-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                 <Grid container display='flex' alignItems='center' direction="column">
                     <Grid item>
-                        <Typography>There are {this.state.searchResults.length} results</Typography>
+                        <Typography>There are {(this.state.searchResults) ? this.state.searchResults.length : 0} results</Typography>
                     </Grid>
                     <Grid container
                         // spacing={3}

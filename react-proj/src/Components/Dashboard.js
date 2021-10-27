@@ -23,6 +23,10 @@ const Dashboard = ({ onProfileClick, onFavouriteClick, onSignClick }) => {
 
   const dispatch = useDispatch()
 
+  useEffect(() => {
+    dispatch(setLoginStatus(false))
+  }, [])
+
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);

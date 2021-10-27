@@ -32,7 +32,7 @@ class Main extends Component {
                     </Grid>
                     <Grid item>
                         {/* Random featured recipe */}
-                        <RandomRecipeItem />
+                        <RandomRecipeItem onItemClick={id => this.props.history.push(`/meal?id=${id}`)} />
 
                     </Grid>
                     <Grid item>

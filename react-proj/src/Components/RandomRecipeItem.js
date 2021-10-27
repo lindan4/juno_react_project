@@ -1,8 +1,8 @@
-import { Paper, Typography } from "@mui/material";
+import { Card, CardActionArea, CardContent, Paper, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from 'axios'
 
-const RandomRecipeItem = () => {
+const RandomRecipeItem = ({ onItemClick = () => {} }) => {
   
   const [randomRecipeInfo, setRandomRecipeInfo] = useState({});
 
@@ -13,25 +13,29 @@ const RandomRecipeItem = () => {
   }, [])
 
   return (
-    <Paper elevation={1} sx={{ display: "flex" }}>
-      <section
-        className="random-recipe-title-section"
-        style={{ display: "flex", flex: 1, borderRadius: 10 }}
-      >
-        <Typography variant="h3" component="p">
-          Random Recipe of the Day: <br /> {randomRecipeInfo.strMeal}
-        </Typography>
-      </section>
-      <section className="random-recipe-content">
-        <img
-          src={randomRecipeInfo.strMealThumb}
-          style={{
-            borderTopRightRadius: 10,
-            borderBottomRightRadius: 10,
-            height: "100%",
-          }}
-        />
-      </section>
+    <Paper component={Card} elevation={1} sx={{ display: "flex" }} onClick={() => onItemClick(randomRecipeInfo.idMeal)}>
+      <CardActionArea>
+        <CardContent sx={{ display: 'flex', flexDirection: 'row' }}>
+          <section
+            className="random-recipe-title-section"
+            style={{ display: "flex", flex: 1, borderRadius: 10 }}
+          >
+            <Typography variant="h4" component="p">
+              Random Recipe of the Day: <br /> {randomRecipeInfo.strMeal}
+            </Typography>
+          </section>
+          <section className="random-recipe-content">
+            <img
+              src={randomRecipeInfo.strMealThumb}
+              style={{
+                borderTopRightRadius: 10,
+                borderBottomRightRadius: 10,
+                height: "100%",
+              }}
+            />
+          </section>
+        </CardContent>
+      </CardActionArea>
     </Paper>
   );
 }
