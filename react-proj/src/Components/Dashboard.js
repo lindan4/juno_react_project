@@ -4,13 +4,15 @@ import { Box } from "@mui/system";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser, logoutUser, signUpUser } from "../api/User";
-import { setLoginStatus, setReduxName, setUserFavourites, setUserId } from "../redux/UserSlice";
+import { setReduxName, setUserFavourites, setUserId } from "../redux/UserSlice";
 
 const Dashboard = ({ onProfileClick, onFavouriteClick, onSignClick }) => {
+
+  const dispatch = useDispatch()
   
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const loggedIn = useSelector(state => state.user.loggedIn)
+  const loggedIn = useSelector(state => state.user.isUserLoggedIn)
 
   const [showSignupPage, setShowSignupPage] = useState(false)
 
@@ -21,11 +23,6 @@ const Dashboard = ({ onProfileClick, onFavouriteClick, onSignClick }) => {
   const [errorMessage, setErrorMessage] = useState('')
   const [showLoginModal, setShowLoginModal] =  useState(false)
 
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(setLoginStatus(false))
-  }, [])
 
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -51,7 +48,6 @@ const Dashboard = ({ onProfileClick, onFavouriteClick, onSignClick }) => {
             onClick={() => {
               handleClose();
               logoutUser().then(() => {
-                dispatch(setLoginStatus(false))
                 console.log("Logged out")
               });
             }}
@@ -98,10 +94,10 @@ const Dashboard = ({ onProfileClick, onFavouriteClick, onSignClick }) => {
               <Button sx={{ marginTop: 2 }} variant='contained' id='login-button' onClick={() => {
                  loginUser(username, password).then(userData => {
                    setShowLoginModal(false)
-                   dispatch(setReduxName(userData.name))
-                   dispatch(setUserId(userData.uid))
-                   dispatch(setUserFavourites(userData.favourites || []))
-                   dispatch(setLoginStatus(true))
+                  //  dispatch(setReduxName(userData.name))
+                  //  dispatch(setUserId(userData.uid))
+                  //  dispatch(setUserFavourites(userData.favourites || []))
+                  //  dispatch(setLoginStatus(true))
                    setUsername('')
                    setPassword('')
                  }).catch(error => {
@@ -136,7 +132,6 @@ const Dashboard = ({ onProfileClick, onFavouriteClick, onSignClick }) => {
                   dispatch(setUserId(userData.uid))
                   setShowLoginModal(false)
                   setShowSignupPage(false)
-                  dispatch(setLoginStatus(true))
                   alert('Success in creating account')
                 }).catch(error => {
                   alert('Error when creating account')

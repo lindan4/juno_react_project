@@ -7,6 +7,13 @@ import SearchResults from './Views/SearchResults';
 import MealInfo from './Views/MealInfo';
 import { Menu } from '@mui/icons-material';
 import { Dashboard } from './Components';
+import store from './store';
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { getFirestore, onSnapshot, doc } from 'firebase/firestore';
+import { useEffect, useState } from 'react';
+import app from './firebase';
+import { clearUserState, logOnUser, setReduxName, setUserFavourites, setUserId } from './redux/UserSlice';
+
 
 
 const AppRoute = ({ exact, path, component: Component }) => {
@@ -30,6 +37,55 @@ const AppRoute = ({ exact, path, component: Component }) => {
 
 
 function App() {
+  const auth = getAuth(app)
+  const db = getFirestore(app)
+
+  const [authUser, setAuthUser] = useState(null)
+
+
+  //Auth user listener
+  useEffect(() => {
+
+    const unsubscribe = onAuthStateChanged(auth, user => {
+      console.log('Ditto')
+      if (user && !user.isAnonymous) {
+        store.dispatch(setUserId(user.uid))
+        // store.dispatch(setLoginStatus(true))
+        store.dispatch(logOnUser())
+      }
+      else {
+        store.dispatch(clearUserState())
+      }
+      setAuthUser(user)
+    })
+
+    return () => unsubscribe()
+
+  }, [])
+
+
+  //User info listener
+  useEffect(() => {
+
+    if (authUser && !authUser.isAnonymous) {
+
+      const userSubscribe = onSnapshot(doc(db, 'users', authUser.uid), userData => {
+        if (userData.exists()) {
+          store.dispatch(setReduxName(userData.data().name))
+          store.dispatch(setUserFavourites(userData.data().favourites || []))
+        }
+      })
+
+      return () => userSubscribe()
+    }
+    else {
+      return
+    }
+
+  }, [authUser])
+
+
+
   return (
     <Switch>
       <AppRoute path='/search' component={SearchResults} />

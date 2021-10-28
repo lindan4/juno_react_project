@@ -3,6 +3,7 @@ import { Grid, IconButton, Paper, TextField, Typography } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import axios from 'axios'
 import { SearchBar, RandomRecipeItem } from '../Components';
+import { connect } from 'react-redux';
 
 
 
@@ -18,6 +19,7 @@ class Main extends Component {
                 <Grid container spacing={1} width='80%' justifyContent='center' direction="column">
                     <Grid item>
                         <h1>The Recipe Archive</h1>
+                        
                     </Grid>
                     <Grid item sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                         {/* Search bar */}
@@ -44,6 +46,5 @@ class Main extends Component {
     }
 
 }
-
 
 export default Main
