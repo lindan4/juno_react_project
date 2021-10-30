@@ -13,6 +13,7 @@ import { getFirestore, onSnapshot, doc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import app from './firebase';
 import { clearUserState, logOnUser, setReduxName, setUserFavourites, setUserId } from './redux/UserSlice';
+import MyFavourites from './Views/MyFavourites';
 
 
 
@@ -25,7 +26,7 @@ const AppRoute = ({ exact, path, component: Component }) => {
       path={path}
       render={(props) => (
         <div>
-          <Dashboard />
+          <Dashboard history={props.history} />
           <Component {...props} />
         </div>
       )}
@@ -47,10 +48,8 @@ function App() {
   useEffect(() => {
 
     const unsubscribe = onAuthStateChanged(auth, user => {
-      console.log('Ditto')
       if (user && !user.isAnonymous) {
         store.dispatch(setUserId(user.uid))
-        // store.dispatch(setLoginStatus(true))
         store.dispatch(logOnUser())
       }
       else {
@@ -90,6 +89,7 @@ function App() {
     <Switch>
       <AppRoute path='/search' component={SearchResults} />
       <AppRoute path='/meal' component={MealInfo} />
+      <AppRoute path='/favourites' component={MyFavourites} />
       <AppRoute path="/" component={Main} />
     </Switch>
   );

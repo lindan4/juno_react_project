@@ -55,7 +55,7 @@ class MealInfo extends Component {
           {ingredients.map(([name, quantity]) => {
             return (
               <li>
-                {quantity} of {name}
+                {quantity} - {name}
               </li>
             );
           })}
@@ -67,11 +67,11 @@ class MealInfo extends Component {
   renderSteps() {
 
     if (this.state.mealInfo.strInstructions !== undefined) {
-      const steps = JSON.stringify(this.state.mealInfo.strInstructions).split('\\r\\n')
+      const stepsAsString = JSON.stringify(this.state.mealInfo.strInstructions)
+      const steps = stepsAsString.substring(1, stepsAsString.length - 1).split('\\r\\n').filter(item => item !== '')
 
       return steps.map((item, index) => {
-        return <p>{index + 1}. {item}</p>
-        
+        return <p>{index + 1}. {item}</p>        
       });
 
     }
