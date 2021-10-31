@@ -211,13 +211,12 @@ const Dashboard = ({ history }) => {
         <MenuOutlined />
       </IconButton>
       {renderDashboardItems()}
-      <Modal
+      {!loggedIn && <Modal
         onBackdropClick={() => setShowLoginModal(false)}
         open={showLoginModal}
         handleClose={() => setShowLoginModal(false)}>
-          {renderLoginContent()}
-          
-        </Modal>
+          {renderLoginContent()}    
+      </Modal>}
     </div>
   );
 };
