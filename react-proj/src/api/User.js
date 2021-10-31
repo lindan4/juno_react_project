@@ -1,7 +1,6 @@
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { getFirestore, collection, addDoc, getDoc, setDoc, doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { getFirestore, collection, setDoc, doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import app from '../firebase'
-import store from '../store'
 
 
 const db = getFirestore(app)

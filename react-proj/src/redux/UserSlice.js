@@ -31,8 +31,8 @@ export const userSlice = createSlice({
             state.userFavourites.push(action.payload)
         },
         removeFavouriteById: (state, action) => {
-            const favouritArrayWithoutId = state.userFavourites.filter(item => item !== action.payload)
-            state.userFavourites = favouritArrayWithoutId
+            const favouriteArrayWithoutId = state.userFavourites.filter(item => item !== action.payload)
+            state.userFavourites = favouriteArrayWithoutId
         },
         clearUserState: () => initialState
     }

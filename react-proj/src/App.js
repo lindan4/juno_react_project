@@ -1,11 +1,8 @@
-import logo from './logo.svg';
 import './App.css';
-import { Grid, IconButton } from '@mui/material';
 import { Route, Switch } from 'react-router';
 import Main from './Views/Main';
 import SearchResults from './Views/SearchResults';
 import MealInfo from './Views/MealInfo';
-import { Menu } from '@mui/icons-material';
 import { Dashboard } from './Components';
 import store from './store';
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
@@ -18,15 +15,13 @@ import MyFavourites from './Views/MyFavourites';
 
 
 const AppRoute = ({ exact, path, component: Component }) => {
-
-
   return (
     <Route
       exact={exact}
       path={path}
       render={(props) => (
         <div>
-          <Dashboard history={props.history} />
+          <Dashboard history={props.history} location={props.location} />
           <Component {...props} />
         </div>
       )}
@@ -46,7 +41,6 @@ function App() {
 
   //Auth user listener
   useEffect(() => {
-
     const unsubscribe = onAuthStateChanged(auth, user => {
       if (user && !user.isAnonymous) {
         store.dispatch(setUserId(user.uid))

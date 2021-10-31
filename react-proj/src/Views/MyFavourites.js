@@ -1,8 +1,8 @@
-import { Grid } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import axios from 'axios';
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { addToFavouriteFBStore, removeFromFavouriteFBStore } from "../api/User";
+import { removeFromFavouriteFBStore } from "../api/User";
 import { FavouriteItem } from '../Components'
 import { addFavouriteById, removeFavouriteById } from '../redux/UserSlice'
 
@@ -13,26 +13,41 @@ class MyFavourites extends Component {
     constructor(props) {
         super(props)
 
-        if (!this.props.isUserLoggedIn) {
-          props.history.push('/')
-        }
-
         this.state = {
           localFavouriteList: []
         }
     }
 
-    componentDidMount() {
+    fetchFavourites() {
       let promiseArray = []
       for (let favouriteItemId of this.props.userFavourites) {
         promiseArray.push(axios.get(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${favouriteItemId}`).then(mealRes => mealRes.data.meals[0]))
       }
 
-      Promise.all(promiseArray).then(favouritesInfo => {
+      return Promise.all(promiseArray)
+
+    }
+
+    componentDidMount() {
+      if (!this.props.isUserLoggedIn) {
+        this.props.history.push('/')
+      }
+
+      this.fetchFavourites().then(favouritesInfo => {
         this.setState({ localFavouriteList: favouritesInfo })
 
       })
     }
+
+    componentDidUpdate(prevProps, prevState) {
+      if (prevProps.userFavourites.length > this.props.userFavourites) {
+        this.fetchFavourites().then(favouritesInfo => {
+          this.setState({ localFavouriteList: favouritesInfo })
+        })
+      }
+    }
+
+
 
     render() {
         const { localFavouriteList = []} = this.state
@@ -44,18 +59,23 @@ class MyFavourites extends Component {
                 className="favourites-container"
                 style={{
                 display: "flex",
-                flexDirection: "row",
-                justifyContent: "center"
+                flexDirection: "column",
+                alignItems: 'center'
                 }}
             >
-                <Grid container display="flex" alignItems="center" direction="column" width='80%'>
+                <Typography>My Favourites</Typography>
+                <Grid container display="flex" alignItems="center" direction="row" width='80%'>
                   {
                     localFavouriteList.map(favouriteItem => (
-                      <FavouriteItem 
-                        key={favouriteItem.idMeal}
-                        item={favouriteItem}
-                        onPress={() => this.props.history.push(`/meal?id=${favouriteItem.idMeal}`)}
-                        removeFromFavourite={() => removeFromFavouriteFBStore(favouriteItem.idMeal)} />
+                      <Grid item key={favouriteItem.idMeal} paddingRight={5}>
+                        <FavouriteItem 
+                          item={favouriteItem}
+                          onPress={() => this.props.history.push(`/meal?id=${favouriteItem.idMeal}`)}
+                          removeFromFavourite={event => {
+                            event.stopPropagation()
+                            removeFromFavouriteFBStore(favouriteItem.idMeal)
+                          }} />
+                      </Grid>
 
                     ))
                   }
