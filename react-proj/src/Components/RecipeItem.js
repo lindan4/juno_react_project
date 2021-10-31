@@ -2,12 +2,11 @@ import { Card, CardActionArea, CardContent, CardMedia, Typography } from "@mui/m
 
 const RecipeItem = ({ item, onItemClick = () => {} }) => {
     return (
-        <Card sx={{ width: 200 }}  onClick={() => onItemClick()}>
+        <Card sx={{ width: 200, borderRadius: 10, height: 350 }}  onClick={() => onItemClick()}>
             <CardActionArea>
-                <CardMedia component='img' src={item.strMealThumb} />
+                <CardMedia component='img' src={item.strMealThumb} alt={`Picture of ${item.strMeal}`} />
                 <CardContent>
-                    <Typography variant='h5' component='h6'>{item.strMeal}</Typography>
-                    {/* Add favourite button */}
+                    <Typography textOverflow="ellipsis" variant='h6' component='p'>{item.strMeal}</Typography>
                 </CardContent>
             </CardActionArea>
         </Card>

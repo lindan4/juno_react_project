@@ -27,6 +27,7 @@ const RandomRecipeItem = ({ onItemClick = () => {} }) => {
           <section className="random-recipe-content">
             <img
               src={randomRecipeInfo.strMealThumb}
+              alt='Picture of random food dish'
               style={{
                 borderTopRightRadius: 10,
                 borderBottomRightRadius: 10,

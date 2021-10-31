@@ -1,5 +1,5 @@
 import { Favorite, FavoriteOutlined } from "@mui/icons-material";
-import { Button, Grid, IconButton } from "@mui/material";
+import { Grid, IconButton } from "@mui/material";
 import axios from "axios";
 import { Component } from "react";
 import { connect } from "react-redux";
@@ -134,6 +134,7 @@ class MealInfo extends Component {
           <Grid item>
             <img
               src={this.state.mealInfo.strMealThumb}
+              alt={`Picture of ${this.state.mealInfo.strMeal}`}
               style={{
                 borderTopRightRadius: 10,
                 borderBottomRightRadius: 10,
