@@ -2,9 +2,9 @@ import { IconButton, Paper, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useState } from "react";
 
-const SearchBar = ({ onSearchPress = () => {} }) => {
+const SearchBar = ({ initialValue = '', onSearchPress = () => {} }) => {
 
-    const [searchValue, setSearchValue] = useState('')
+  const [searchValue, setSearchValue] = useState(initialValue)
     
   return (
     <Paper

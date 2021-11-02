@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import app from './firebase';
 import { clearUserState, logOnUser, setReduxName, setUserFavourites, setUserId } from './redux/UserSlice';
 import MyFavourites from './Views/MyFavourites';
+import Profile from './Views/Profile';
 
 
 
@@ -84,6 +85,7 @@ function App() {
       <AppRoute path='/search' component={SearchResults} />
       <AppRoute path='/meal' component={MealInfo} />
       <AppRoute path='/favourites' component={MyFavourites} />
+      <AppRoute path='/profile' component={Profile} />
       <AppRoute path="/" component={Main} />
     </Switch>
   );

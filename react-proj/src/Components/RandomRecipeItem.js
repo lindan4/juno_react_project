@@ -18,10 +18,10 @@ const RandomRecipeItem = ({ onItemClick = () => {} }) => {
         <CardContent sx={{ display: 'flex', flexDirection: 'row' }}>
           <section
             className="random-recipe-title-section"
-            style={{ display: "flex", flex: 1, borderRadius: 10 }}
+            style={{ display: "flex", flex: 1, borderRadius: 10, flexDirection: 'row', justifyContent: 'center' }}
           >
             <Typography variant="h4" component="p">
-              Random Recipe of the Day: <br /> {randomRecipeInfo.strMeal}
+              Featured Recipe: <br /> {randomRecipeInfo.strMeal}
             </Typography>
           </section>
           <section className="random-recipe-content">

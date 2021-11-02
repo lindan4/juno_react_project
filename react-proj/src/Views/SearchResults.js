@@ -1,7 +1,7 @@
 import { Grid, Typography, CircularProgress } from '@mui/material'
 import axios from 'axios'
 import { Component } from 'react'
-import { RecipeItem } from '../Components'
+import { RecipeItem, SearchBar } from '../Components'
 
 
 class SearchResults extends Component {
@@ -59,7 +59,8 @@ class SearchResults extends Component {
               }}
             >
               <Grid container display="flex" alignItems="center" direction="column">
-                <Grid item>
+                <Grid item container direction='column'>
+                  {/* <SearchBar /> */}
                   <Typography>
                     There are{" "}
                     {this.state.searchResults ? this.state.searchResults.length : 0}{" "}

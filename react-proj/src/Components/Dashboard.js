@@ -54,7 +54,10 @@ const Dashboard = ({ history, location }) => {
           open={open}
           onClose={handleMenuAnchorClose}
         >
-          <MenuItem onClick={handleMenuAnchorClose}>Profile</MenuItem>
+          <MenuItem onClick={() => {
+              handleMenuAnchorClose()
+              history.push('/profile')
+            }}>Profile</MenuItem>
           <MenuItem
             onClick={() => {
               handleMenuAnchorClose();
@@ -315,12 +318,12 @@ const Dashboard = ({ history, location }) => {
         </Modal>
       }
 
-      {/* <Snackbar open={showLoginSuccessfulSnackbar} autoHideDuration={4000} onClose={() => setShowLoginSuccessfulSnackbar(false)}>
+      <Snackbar open={showLoginSuccessfulSnackbar} autoHideDuration={4000} onClose={() => setShowLoginSuccessfulSnackbar(false)}>
         <Alert severity="success" sx={{ width: '100%' }}>
           Login successful
         </Alert>
 
-      </Snackbar> */}
+      </Snackbar>
       
     </div>
   );
