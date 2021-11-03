@@ -17,13 +17,31 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser, logoutUser, signUpUser } from "../api/User";
 import { setReduxName, setUserId } from "../redux/UserSlice";
+import { useLocation } from 'react-router-dom'
 
-const Dashboard = ({ history, location }) => {
+const Dashboard = ({ history }) => {
   const dispatch = useDispatch();
+
+  const location = useLocation()
+
+  const [homeButtonVisible, setHomeButtonVisible] = useState(false)
+
+
+  useEffect(() => {
+    if (location.pathname === '/') {
+      setHomeButtonVisible(false)
+    }
+    else {
+      setHomeButtonVisible(true)
+    }
+
+  }, [location])
+
 
   const [anchorEl, setAnchorEl] = useState(null);
 
   const loggedIn = useSelector((state) => state.user.isUserLoggedIn);
+
 
   const [showSignupPage, setShowSignupPage] = useState(false);
 
@@ -32,10 +50,9 @@ const Dashboard = ({ history, location }) => {
   const [password, setPassword] = useState("");
 
   const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showLoginSuccessfulSnackbar, setShowLoginSuccessfulSnackbar] = useState(false);
-  const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState(false);
+  const [showSuccessfulSnackbar, setShowSuccessfulSnackbar] = useState(false);
+  const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
 
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -54,7 +71,10 @@ const Dashboard = ({ history, location }) => {
           open={open}
           onClose={handleMenuAnchorClose}
         >
-          <MenuItem onClick={handleMenuAnchorClose}>Profile</MenuItem>
+          <MenuItem onClick={() => {
+              handleMenuAnchorClose()
+              history.push('/profile')
+            }}>Profile</MenuItem>
           <MenuItem
             onClick={() => {
               handleMenuAnchorClose();
@@ -68,6 +88,8 @@ const Dashboard = ({ history, location }) => {
               handleMenuAnchorClose();
               logoutUser().then(() => {
                 history.push("/");
+                setSnackbarSuccessMessage('Successfully logged out.')
+                setShowSuccessfulSnackbar(true)
                 console.log("Logged out");
               });
             }}
@@ -87,6 +109,7 @@ const Dashboard = ({ history, location }) => {
           <MenuItem
             onClick={() => {
               handleMenuAnchorClose();
+              setErrorMessage('')
               setShowLoginModal(true);
             }}
           >
@@ -103,17 +126,6 @@ const Dashboard = ({ history, location }) => {
         <Alert severity="error" sx={{ marginTop: 2 }}>
           <AlertTitle>Error</AlertTitle>
           {errorMessage}
-        </Alert>
-      );
-    }
-  };
-
-  const renderSuccessField = () => {
-    if (successMessage !== "") {
-      return (
-        <Alert severity="success" sx={{ marginTop: 2 }}>
-          <AlertTitle>Success</AlertTitle>
-          {successMessage}
         </Alert>
       );
     }
@@ -161,21 +173,22 @@ const Dashboard = ({ history, location }) => {
                   if (username !== "" && password !== "") {
                     loginUser(username, password)
                       .then(() => {
-                        setShowLoginSuccessfulSnackbar(true);
+                        setSnackbarSuccessMessage('Logged in.')
+                        setShowSuccessfulSnackbar(true);
                         setUsername("");
                         setPassword("");
                         setShowLoginModal(false);
                       })
                       .catch((error) => {
-                        setErrorMessage(error.message);
-                        setSuccessMessage("");
+                        setErrorMessage('Unable to login. Please try again.');
+                        setSnackbarSuccessMessage("");
                         console.log(error);
                       });
                   } else {
                     setErrorMessage(
                       "One or more fields are missing. Please input username and/or password and try again."
                     );
-                    setSuccessMessage("");
+                    setSnackbarSuccessMessage("");
                   }
                 }}
               >
@@ -191,7 +204,7 @@ const Dashboard = ({ history, location }) => {
                 onClick={() => {
                   setShowSignupPage(true);
                   setErrorMessage("");
-                  setSuccessMessage("");
+                  setSnackbarSuccessMessage("");
                 }}
               >
                 here
@@ -199,7 +212,6 @@ const Dashboard = ({ history, location }) => {
               to sign up.
             </Typography>
             {renderErrorField()}
-            {renderSuccessField()}
           </Box>
         );
       } else {
@@ -219,7 +231,7 @@ const Dashboard = ({ history, location }) => {
               <Button
                 variant="text"
                 onClick={() => {
-                  setSuccessMessage("");
+                  setSnackbarSuccessMessage("");
                   setErrorMessage("");
                   setShowSignupPage(false);
                 }}
@@ -269,15 +281,15 @@ const Dashboard = ({ history, location }) => {
                   if (username !== "" && password !== "" && name !== "") {
                     signUpUser(username, password, name)
                       .then((userData) => {
-                        dispatch(setReduxName(userData.name));
-                        dispatch(setUserId(userData.uid));
-                        setSuccessMessage("Success in creating account.");
                         setErrorMessage("");
                         setShowLoginModal(false);
-                        setShowSignupPage(false);
+                        setShowSignupPage(false); 
+                        dispatch(setReduxName(userData.name));
+                        dispatch(setUserId(userData.uid));
+                        setSnackbarSuccessMessage("Success in creating account. You have been logged in automatically.");
                       })
                       .catch((error) => {
-                        setSuccessMessage("");
+                        setSnackbarSuccessMessage("");
                         setErrorMessage(error.message);
                         console.log(error);
                       });
@@ -287,7 +299,6 @@ const Dashboard = ({ history, location }) => {
                 Sign Up
               </Button>
               {renderErrorField()}
-              {renderSuccessField()}
             </Box>
           </Box>
         );
@@ -300,7 +311,7 @@ const Dashboard = ({ history, location }) => {
       <IconButton onClick={handleClick}>
         <MenuOutlined />
       </IconButton>
-      {!location.pathname.match("/") && (
+      {homeButtonVisible && (
         <IconButton onClick={() => history.push("/")}>
           <Home />
         </IconButton>
@@ -315,12 +326,15 @@ const Dashboard = ({ history, location }) => {
         </Modal>
       }
 
-      {/* <Snackbar open={showLoginSuccessfulSnackbar} autoHideDuration={4000} onClose={() => setShowLoginSuccessfulSnackbar(false)}>
+      <Snackbar open={showSuccessfulSnackbar} autoHideDuration={4000} onClose={() => {
+          setShowSuccessfulSnackbar(false)
+          setSnackbarSuccessMessage('')
+        }}>
         <Alert severity="success" sx={{ width: '100%' }}>
-          Login successful
+          {snackbarSuccessMessage}
         </Alert>
 
-      </Snackbar> */}
+      </Snackbar>
       
     </div>
   );

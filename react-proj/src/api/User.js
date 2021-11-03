@@ -1,5 +1,6 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "firebase/auth";
 import { getFirestore, collection, setDoc, doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { PASSWORD_CHANGE_ERROR, PASSWORD_CHANGE_SUCCESS, PASSWORD_MISMATCH, INVALID_CREDENTIALS, NAME_CHANGE_SUCCESS, NAME_CHANGE_ERROR, PASSWORDS_SAME } from "../Constants";
 import app from '../firebase'
 
 
@@ -29,7 +30,6 @@ export const removeFromFavouriteFBStore = (id) => {
     return new Promise((resolve, reject) => {
 
         const userId = auth.currentUser.uid
-
 
         updateDoc(doc(userRef, userId), {
             favourites: arrayRemove(id)
@@ -73,4 +73,53 @@ export const logoutUser = () => {
             resolve()
         }).catch(error => reject(error))
     })
+}
+
+export const updateFBName = (newName) => {
+
+    return new Promise((resolve, reject) => {
+
+        const userId = auth.currentUser.uid
+
+        const userDoc = doc(userRef, userId)
+        
+
+        updateDoc(userDoc, {
+            name: newName
+        }).then(() => {
+            resolve(NAME_CHANGE_SUCCESS)
+        }).catch(() => {
+            reject(NAME_CHANGE_ERROR)
+        })
+
+    })
+
+}
+
+
+export const updateFBPassword = (currentPassword, newPassword) => {
+
+    let currentUser = auth.currentUser
+    let credentials = EmailAuthProvider.credential(currentUser.email, currentPassword)
+
+    return new Promise((resolve, reject) => {
+        reauthenticateWithCredential(currentUser, credentials).then(() => {
+            if (currentPassword !== newPassword) {
+                updatePassword(currentUser, newPassword).then(() => {
+                    resolve(PASSWORD_CHANGE_SUCCESS)
+                }).catch(() => reject(PASSWORD_CHANGE_ERROR))
+
+            }
+            else {
+                reject(PASSWORDS_SAME)
+            }
+    
+        }).catch(() => {
+            reject(INVALID_CREDENTIALS)
+        })
+
+    })
+    
+    
+
 }

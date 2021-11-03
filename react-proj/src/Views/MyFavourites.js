@@ -47,15 +47,14 @@ class MyFavourites extends Component {
       }
     }
 
+    renderFavouriteContent() {
 
+      const { localFavouriteList = []} = this.state
 
-    render() {
-        const { localFavouriteList = []} = this.state
-
-        // console.log(this.state.localFavouriteList)
+      if (localFavouriteList.length > 0) {
 
         return (
-            <div
+          <div
                 className="favourites-container"
                 style={{
                 display: "flex",
@@ -79,11 +78,34 @@ class MyFavourites extends Component {
 
                     ))
                   }
-
-
                 </Grid>
+          </div>
+
+        )
+      }
+      else {
+        return (
+          <div
+            className="search-results-container"
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: 'center',
+              width: '100vw',
+              height: '100vh'
+            }}>
+              <h3>You appear to have no favourites. Search for recipes and add them to your favourites to view them here.</h3> 
             </div>
         )
+
+      }
+    }
+
+
+
+    render() {
+        return this.renderFavouriteContent()
     }
 
 

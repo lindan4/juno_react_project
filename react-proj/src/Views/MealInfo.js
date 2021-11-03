@@ -103,14 +103,14 @@ class MealInfo extends Component {
 
     if (this.props.userFavourites.includes(mealId)) {
       return (
-        <IconButton onClick={this.removeFromFavourite}>
+        <IconButton disabled={!this.props.isUserLoggedIn} onClick={this.removeFromFavourite}>
           <Favorite sx={{ color: 'pink' }} />
         </IconButton>
       )
     }
     else {
       return (
-        <IconButton onClick={this.addToFavourite}>
+        <IconButton disabled={!this.props.isUserLoggedIn} onClick={this.addToFavourite}>
           <FavoriteOutlined  sx={{ color: 'none' }}/>
         </IconButton>
       )
@@ -165,9 +165,9 @@ class MealInfo extends Component {
 }
 
 const mapStateToProps = state => {
-  const { userFavourites } = state.user
+  const { userFavourites, isUserLoggedIn } = state.user
 
-  return { userFavourites }
+  return { userFavourites, isUserLoggedIn }
 
 }
 
