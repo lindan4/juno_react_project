@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Grid, Typography, TextField, Button, Alert, AlertTitle } from '@mui/material'
-import { INVALID_CREDENTIALS, NAME_CHANGE_ERROR, NAME_CHANGE_SUCCESS ,PASSWORD_CHANGE_SUCCESS, PASSWORD_MISMATCH, SECONDARY_COLOUR } from '../Constants'
+import { INVALID_CREDENTIALS, NAME_CHANGE_ERROR, NAME_CHANGE_SUCCESS ,PASSWORDS_SAME,PASSWORD_CHANGE_SUCCESS, PASSWORD_MISMATCH, SECONDARY_COLOUR } from '../Constants'
 import { updateFBName, updateFBPassword } from '../api/User'
 
 
@@ -14,6 +14,7 @@ class Profile extends Component {
             enteredName: this.props.name,
             currentPassword: '',
             newPassword: '',
+            confirmNewPassword: '',
             errorMessage: '',
             successMessage: ''
         }
@@ -51,7 +52,7 @@ class Profile extends Component {
 
     handleSubmit(event) {
         event.preventDefault()
-        this.setState({ errorMessage: '' })
+        this.setState({ errorMessage: '', successMessage: '' })
 
         let promiseArray = []
 
@@ -61,38 +62,20 @@ class Profile extends Component {
                     return 'Successfully changed name associated with account.'
                 }
 
-            }).catch(error => {
-                if (error === NAME_CHANGE_ERROR) {
-                    return 'Unable to change name. Please try again.'
-                }
-
             }))
-
         }
 
-        if (this.state.currentPassword !== '' && this.state.newPassword !== '') {
-            promiseArray.push(updateFBPassword(this.state.currentPassword, this.state.newPassword).then(res => {
-                let successMessage = ''
-                if (res === PASSWORD_CHANGE_SUCCESS) {
-                    successMessage = 'Your password has been successfully changed.'
-                }
-                
-                return successMessage
-            }).catch(error => {
-                let errorMessage = ''
-                if (error === INVALID_CREDENTIALS) {
-                    errorMessage = 'The entered information is not present in our records. Please try again.'
-    
-                }
-                else if (error === PASSWORD_MISMATCH) {
-                    errorMessage = 'The entered passwords do not match. Please try again.'
-    
-                }
-                else {
-                    errorMessage = 'There appears to be an internal error. Please refresh the app and try again.'
-                }
-                return errorMessage
-            }))
+        if (this.state.currentPassword !== '' && this.state.newPassword !== '' && this.state.confirmNewPassword !== '') {
+            if (this.state.newPassword === this.state.confirmNewPassword) {
+                promiseArray.push(updateFBPassword(this.state.currentPassword, this.state.newPassword).then(res => {
+                    let successMessage = ''
+                    if (res === PASSWORD_CHANGE_SUCCESS) {
+                        successMessage = 'Your password has been successfully changed.'
+                    }
+                    
+                    return successMessage
+                }))
+            }
         }
 
 
@@ -104,21 +87,43 @@ class Profile extends Component {
                 
                 if (res.length > 0) {
                     res.forEach(item => {
+                        console.log(item)
                         if (item.status === 'fulfilled') {
                             tempSuccessMessage += `${item.value} `
                         }
                         else {
-                            tempErrorMessage += `${item.value} `
+                            if (item.value === NAME_CHANGE_ERROR) {
+                                tempErrorMessage += 'Unable to change name. Please try again.'
+
+                            }
+                            
+                            if (item.value === INVALID_CREDENTIALS) {
+                                tempErrorMessage += 'The entered information is not present in our records. Please try again.'
+                
+                            }
+                            else if (item.value === PASSWORDS_SAME) {
+                                tempErrorMessage += 'The entered passwords (old and new) are the same. Please try again.'
+                
+                            }
+                            else {
+                                tempErrorMessage = 'There appears to be an internal error. Please refresh the app and try again.'
+                            }
+                            // tempErrorMessage += `${item.value} `
                         }
                     })
                 }
 
-                this.setState({ currentPassword: '', newPassword: '', successMessage: tempSuccessMessage, errorMessage: tempErrorMessage })
+                this.setState({ currentPassword: '', newPassword: '', confirmNewPassword: '', successMessage: tempSuccessMessage, errorMessage: tempErrorMessage })
             })
             
         }
         else {
-            alert('No information has been changed. Please reenter.')
+            if (this.state.newPassword !== this.state.confirmNewPassword) {
+                this.setState({ errorMessage: 'The passwords do not match. Please try again.' })
+            }
+            else {
+                this.setState({ errorMessage: 'No information has been changed. Please try again.' })
+            }
         }
        
     }
@@ -144,7 +149,7 @@ class Profile extends Component {
                             <h4>Password</h4>
                             <TextField type='password' sx={{ paddingBottom: 2 }} value={this.state.currentPassword} onChange={event => this.setState({ currentPassword: event.target.value })} label='Current Password' />
                             <TextField type='password' sx={{ paddingBottom: 2 }} value={this.state.newPassword} onChange={event => this.setState({ newPassword: event.target.value })} label='New Password' />
-                            
+                            <TextField type='password' sx={{ paddingBottom: 2 }} value={this.state.confirmNewPassword} onChange={event => this.setState({ confirmNewPassword: event.target.value })} label='Confirm New Password' />
                         </Grid>
                         <Button type='submit' variant='contained'>Apply</Button>
                     </form>

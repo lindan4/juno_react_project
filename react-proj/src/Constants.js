@@ -6,5 +6,6 @@ export const NAME_CHANGE_ERROR = 'name-change-error'
 
 export const PASSWORD_CHANGE_SUCCESS = 'password-change-success'
 export const PASSWORD_MISMATCH = 'non-matching-passwords'
+export const PASSWORDS_SAME = 'passwords-same'
 export const PASSWORD_CHANGE_ERROR = 'password-change-error'
 export const INVALID_CREDENTIALS = 'credentials-invalid'
