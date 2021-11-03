@@ -108,7 +108,6 @@ class Profile extends Component {
                             else {
                                 tempErrorMessage = 'There appears to be an internal error. Please refresh the app and try again.'
                             }
-                            // tempErrorMessage += `${item.value} `
                         }
                     })
                 }

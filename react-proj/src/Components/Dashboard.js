@@ -17,13 +17,31 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser, logoutUser, signUpUser } from "../api/User";
 import { setReduxName, setUserId } from "../redux/UserSlice";
+import { useLocation } from 'react-router-dom'
 
-const Dashboard = ({ history, location }) => {
+const Dashboard = ({ history }) => {
   const dispatch = useDispatch();
+
+  const location = useLocation()
+
+  const [homeButtonVisible, setHomeButtonVisible] = useState(false)
+
+
+  useEffect(() => {
+    if (location.pathname === '/') {
+      setHomeButtonVisible(false)
+    }
+    else {
+      setHomeButtonVisible(true)
+    }
+
+  }, [location])
+
 
   const [anchorEl, setAnchorEl] = useState(null);
 
   const loggedIn = useSelector((state) => state.user.isUserLoggedIn);
+
 
   const [showSignupPage, setShowSignupPage] = useState(false);
 
@@ -293,7 +311,7 @@ const Dashboard = ({ history, location }) => {
       <IconButton onClick={handleClick}>
         <MenuOutlined />
       </IconButton>
-      {!location.pathname.match("/") && (
+      {homeButtonVisible && (
         <IconButton onClick={() => history.push("/")}>
           <Home />
         </IconButton>

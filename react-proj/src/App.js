@@ -22,7 +22,7 @@ const AppRoute = ({ exact, path, component: Component }) => {
       path={path}
       render={(props) => (
         <div>
-          <Dashboard history={props.history} location={props.location} />
+          <Dashboard history={props.history} />
           <Component {...props} />
         </div>
       )}
