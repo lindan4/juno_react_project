@@ -11,14 +11,13 @@ class SearchResults extends Component {
     this.state = {
       resultsLoading: false,
       searchResults: [],
+      searchQuery: '',
       loading: true
     };
   }
 
-  componentDidMount() {
-    const urlParams = new URLSearchParams(this.props.location.search);
-    const keyword = urlParams.get("keyword");
-    console.log(keyword);
+  fetchQuery(keyword) {
+    this.setState({ searchQuery: keyword })
     axios
       .get(`https://www.themealdb.com/api/json/v1/1/search.php?s=${keyword}`)
       .then((searchRes) => {
@@ -29,6 +28,22 @@ class SearchResults extends Component {
         }
       })
       .catch((error) => console.log(error));
+  }
+
+  componentDidMount() {
+    const urlParams = new URLSearchParams(this.props.location.search);
+    const keyword = urlParams.get("keyword");
+    this.fetchQuery(keyword)
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.location.search !== this.props.location.search) {
+
+        const urlParams = new URLSearchParams(this.props.location.search);
+        const keyword = urlParams.get("keyword");
+
+        this.fetchQuery(keyword)
+    }
   }
 
   renderContent() {
@@ -59,9 +74,12 @@ class SearchResults extends Component {
               }}
             >
               <Grid container display="flex" alignItems="center" direction="column">
-                <Grid item container direction='column'>
-                  {/* <SearchBar /> */}
-                  <Typography>
+                <Grid item container direction='column' alignItems='center'>
+                  <SearchBar initialValue={this.state.searchQuery} onSearchPress={value => {
+                      console.log("Outer value: ", value)
+                      this.props.history.push(`/search?keyword=${value}`)
+                    }} />
+                  <Typography sx={{ marginTop: 10 }}>
                     There are{" "}
                     {this.state.searchResults ? this.state.searchResults.length : 0}{" "}
                     results

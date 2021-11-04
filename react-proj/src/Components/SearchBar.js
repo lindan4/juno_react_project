@@ -5,11 +5,18 @@ import { useState } from "react";
 const SearchBar = ({ initialValue = '', onSearchPress = () => {} }) => {
 
   const [searchValue, setSearchValue] = useState(initialValue)
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    onSearchPress(searchValue)
+
+  }
     
   return (
     <Paper
-      component="form"
+      component='form'
       elevation={1}
+      onSubmit={handleSubmit}
       sx={{ p: "5px 4px", display: "flex", alignItems: "center", width: "60%" }}
     >
       <TextField
@@ -23,9 +30,7 @@ const SearchBar = ({ initialValue = '', onSearchPress = () => {} }) => {
       />
       <IconButton
         type="submit"
-        // style={{ display: "flex", flex: 0.5 }}
         aria-label="search"
-        onClick={() => onSearchPress(searchValue)}
       >
         <SearchIcon />
       </IconButton>
