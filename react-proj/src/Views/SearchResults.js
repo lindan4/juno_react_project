@@ -16,18 +16,41 @@ class SearchResults extends Component {
     };
   }
 
-  fetchQuery(keyword) {
-    this.setState({ searchQuery: keyword })
-    axios
+  fetchMeals(keyword) { 
+    return new Promise((resolve, reject) => {
+      axios
       .get(`https://www.themealdb.com/api/json/v1/1/search.php?s=${keyword}`)
       .then((searchRes) => {
         if (searchRes.data.meals) {
-          this.setState({ searchResults: searchRes.data.meals, loading: false });
+          resolve(searchRes.data.meals)
         } else {
-          this.setState({ searchResults: [], loading: false });
+          resolve([])
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error)
+        reject(error)
+      });
+    })
+  }
+
+  fetchQuery(keyword) {
+    // this.setState({ searchQuery: keyword })
+    // axios
+    //   .get(`https://www.themealdb.com/api/json/v1/1/search.php?s=${keyword}`)
+    //   .then((searchRes) => {
+    //     if (searchRes.data.meals) {
+    //       this.setState({ searchResults: searchRes.data.meals, loading: false });
+    //     } else {
+    //       this.setState({ searchResults: [], loading: false });
+    //     }
+    //   })
+    //   .catch((error) => console.log(error));
+    this.fetchMeals(keyword).then(mealResults => {
+      this.setState({ searchResults: mealResults, loading: false });
+    }).catch(() => {
+      this.setState({ searchResults: mealResults, loading: false });
+    })
   }
 
   componentDidMount() {
