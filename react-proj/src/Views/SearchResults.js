@@ -1,6 +1,7 @@
 import { Grid, Typography, CircularProgress } from '@mui/material'
 import axios from 'axios'
 import { Component } from 'react'
+import { fetchMeals } from '../api/Meal';
 import { RecipeItem, SearchBar } from '../Components'
 
 
@@ -11,27 +12,9 @@ class SearchResults extends Component {
     this.state = {
       resultsLoading: false,
       searchResults: [],
-      searchQuery: '',
+      // searchQuery: '',
       loading: true
     };
-  }
-
-  fetchMeals(keyword) { 
-    return new Promise((resolve, reject) => {
-      axios
-      .get(`https://www.themealdb.com/api/json/v1/1/search.php?s=${keyword}`)
-      .then((searchRes) => {
-        if (searchRes.data.meals) {
-          resolve(searchRes.data.meals)
-        } else {
-          resolve([])
-        }
-      })
-      .catch((error) => {
-        console.log(error)
-        reject(error)
-      });
-    })
   }
 
   fetchQuery(keyword) {
@@ -46,10 +29,10 @@ class SearchResults extends Component {
     //     }
     //   })
     //   .catch((error) => console.log(error));
-    this.fetchMeals(keyword).then(mealResults => {
+    fetchMeals(keyword).then(mealResults => {
       this.setState({ searchResults: mealResults, loading: false });
     }).catch(() => {
-      this.setState({ searchResults: mealResults, loading: false });
+      this.setState({ searchResults: [], loading: false });
     })
   }
 
@@ -57,6 +40,8 @@ class SearchResults extends Component {
     const urlParams = new URLSearchParams(this.props.location.search);
     const keyword = urlParams.get("keyword");
     this.fetchQuery(keyword)
+    this.keyword = keyword
+    
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -64,8 +49,9 @@ class SearchResults extends Component {
 
         const urlParams = new URLSearchParams(this.props.location.search);
         const keyword = urlParams.get("keyword");
-
         this.fetchQuery(keyword)
+
+        this.keyword = keyword
     }
   }
 
@@ -98,7 +84,7 @@ class SearchResults extends Component {
             >
               <Grid container display="flex" alignItems="center" direction="column">
                 <Grid item container direction='column' alignItems='center'>
-                  <SearchBar initialValue={this.state.searchQuery} onSearchPress={value => {
+                  <SearchBar initialValue={this.keyword} onSearchPress={value => {
                       console.log("Outer value: ", value)
                       this.props.history.push(`/search?keyword=${value}`)
                     }} />
