@@ -119,7 +119,4 @@ export const updateFBPassword = (currentPassword, newPassword) => {
         })
 
     })
-    
-    
-
 }

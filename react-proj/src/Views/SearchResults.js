@@ -1,6 +1,7 @@
 import { Grid, Typography, CircularProgress } from '@mui/material'
 import axios from 'axios'
 import { Component } from 'react'
+import { fetchMeals } from '../api/Meal';
 import { RecipeItem, SearchBar } from '../Components'
 
 
@@ -11,24 +12,47 @@ class SearchResults extends Component {
     this.state = {
       resultsLoading: false,
       searchResults: [],
+      // searchQuery: '',
       loading: true
     };
+  }
+
+  fetchQuery(keyword) {
+    // this.setState({ searchQuery: keyword })
+    // axios
+    //   .get(`https://www.themealdb.com/api/json/v1/1/search.php?s=${keyword}`)
+    //   .then((searchRes) => {
+    //     if (searchRes.data.meals) {
+    //       this.setState({ searchResults: searchRes.data.meals, loading: false });
+    //     } else {
+    //       this.setState({ searchResults: [], loading: false });
+    //     }
+    //   })
+    //   .catch((error) => console.log(error));
+    fetchMeals(keyword).then(mealResults => {
+      this.setState({ searchResults: mealResults, loading: false });
+    }).catch(() => {
+      this.setState({ searchResults: [], loading: false });
+    })
   }
 
   componentDidMount() {
     const urlParams = new URLSearchParams(this.props.location.search);
     const keyword = urlParams.get("keyword");
-    console.log(keyword);
-    axios
-      .get(`https://www.themealdb.com/api/json/v1/1/search.php?s=${keyword}`)
-      .then((searchRes) => {
-        if (searchRes.data.meals) {
-          this.setState({ searchResults: searchRes.data.meals, loading: false });
-        } else {
-          this.setState({ searchResults: [], loading: false });
-        }
-      })
-      .catch((error) => console.log(error));
+    this.fetchQuery(keyword)
+    this.keyword = keyword
+    
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.location.search !== this.props.location.search) {
+
+        const urlParams = new URLSearchParams(this.props.location.search);
+        const keyword = urlParams.get("keyword");
+        this.fetchQuery(keyword)
+
+        this.keyword = keyword
+    }
   }
 
   renderContent() {
@@ -59,9 +83,12 @@ class SearchResults extends Component {
               }}
             >
               <Grid container display="flex" alignItems="center" direction="column">
-                <Grid item container direction='column'>
-                  {/* <SearchBar /> */}
-                  <Typography>
+                <Grid item container direction='column' alignItems='center'>
+                  <SearchBar initialValue={this.keyword} onSearchPress={value => {
+                      console.log("Outer value: ", value)
+                      this.props.history.push(`/search?keyword=${value}`)
+                    }} />
+                  <Typography sx={{ marginTop: 10 }}>
                     There are{" "}
                     {this.state.searchResults ? this.state.searchResults.length : 0}{" "}
                     results

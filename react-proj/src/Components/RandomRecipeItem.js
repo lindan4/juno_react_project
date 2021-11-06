@@ -1,15 +1,19 @@
 import { Card, CardActionArea, CardContent, Paper, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from 'axios'
+import { getRandomRecipe } from "../api/Meal";
 
 const RandomRecipeItem = ({ onItemClick = () => {} }) => {
   
   const [randomRecipeInfo, setRandomRecipeInfo] = useState({});
 
   useEffect(() => {
-    axios.get('https://www.themealdb.com/api/json/v1/1/random.php').then(randomRes => {
-            setRandomRecipeInfo(randomRes.data.meals[0])
-        })
+    // axios.get('https://www.themealdb.com/api/json/v1/1/random.php').then(randomRes => {
+    //         setRandomRecipeInfo(randomRes.data.meals[0])
+    //     })
+    getRandomRecipe().then(meal => {
+      setRandomRecipeInfo(meal)
+    })
   }, [])
 
   return (

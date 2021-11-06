@@ -131,6 +131,50 @@ const Dashboard = ({ history }) => {
     }
   };
 
+  const handleLogin = event => {
+    event.preventDefault()
+    if (username !== "" && password !== "") {
+      loginUser(username, password)
+        .then(() => {
+          setSnackbarSuccessMessage('Logged in.')
+          setShowSuccessfulSnackbar(true);
+          setUsername("");
+          setPassword("");
+          setShowLoginModal(false);
+        })
+        .catch((error) => {
+          setErrorMessage('Unable to login. Please try again.');
+          setSnackbarSuccessMessage("");
+          console.log(error);
+        });
+    } else {
+      setErrorMessage(
+        "One or more fields are missing. Please input username and/or password and try again."
+      );
+      setSnackbarSuccessMessage("");
+    }
+  }
+
+  const handleSignUp = (event) => {
+    event.preventDefault()
+    if (username !== "" && password !== "" && name !== "") {
+      signUpUser(username, password, name)
+        .then((userData) => {
+          setErrorMessage("");
+          setShowLoginModal(false);
+          setShowSignupPage(false); 
+          dispatch(setReduxName(userData.name));
+          dispatch(setUserId(userData.uid));
+          setSnackbarSuccessMessage("Success in creating account. You have been logged in automatically.");
+        })
+        .catch((error) => {
+          setSnackbarSuccessMessage("");
+          setErrorMessage(error.message);
+          console.log(error);
+        });
+    }
+  }
+
   const renderLoginContent = () => {
     if (!loggedIn) {
       if (!showSignupPage) {
@@ -139,63 +183,43 @@ const Dashboard = ({ history }) => {
             <Typography variant="h6" component="h2">
               Login
             </Typography>
-            <Box
-              sx={{
-                marginTop: 1,
-                alignItems: "flex-start",
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
-              <TextField
-                sx={{ marginTop: 4 }}
-                id="Email-field"
-                label="Email"
-                variant="outlined"
-                value={username}
-                type="email"
-                onChange={(event) => setUsername(event.target.value)}
-              />
-              <TextField
-                sx={{ marginTop: 2 }}
-                id="password-field"
-                label="Password"
-                variant="outlined"
-                value={password}
-                type="password"
-                onChange={(event) => setPassword(event.target.value)}
-              />
-              <Button
-                sx={{ marginTop: 2 }}
-                variant="contained"
-                id="login-button"
-                onClick={() => {
-                  if (username !== "" && password !== "") {
-                    loginUser(username, password)
-                      .then(() => {
-                        setSnackbarSuccessMessage('Logged in.')
-                        setShowSuccessfulSnackbar(true);
-                        setUsername("");
-                        setPassword("");
-                        setShowLoginModal(false);
-                      })
-                      .catch((error) => {
-                        setErrorMessage('Unable to login. Please try again.');
-                        setSnackbarSuccessMessage("");
-                        console.log(error);
-                      });
-                  } else {
-                    setErrorMessage(
-                      "One or more fields are missing. Please input username and/or password and try again."
-                    );
-                    setSnackbarSuccessMessage("");
-                  }
+              <Box
+                sx={{
+                  marginTop: 1,
+                  alignItems: "flex-start",
+                  display: "flex",
+                  flexDirection: "column",
                 }}
+                component='form'
+                onSubmit={handleLogin}
               >
-                Login
-              </Button>
-              {/* <Typography color='red'>{errorMessage}</Typography> */}
-            </Box>
+                  <TextField
+                    sx={{ marginTop: 4 }}
+                    id="Email-field"
+                    label="Email"
+                    variant="outlined"
+                    value={username}
+                    type="email"
+                    onChange={(event) => setUsername(event.target.value)}
+                  />
+                  <TextField
+                    sx={{ marginTop: 2 }}
+                    id="password-field"
+                    label="Password"
+                    variant="outlined"
+                    value={password}
+                    type="password"
+                    onChange={(event) => setPassword(event.target.value)}
+                  />
+                  <Button
+                    sx={{ marginTop: 2 }}
+                    variant="contained"
+                    id="login-button"
+                    type='submit'
+                  >
+                    Login
+                  </Button>
+              </Box>
 
             <Typography variant="h6" component="h2" sx={{ mt: 6 }}>
               Don't have an account? Click{" "}
@@ -239,67 +263,52 @@ const Dashboard = ({ history }) => {
                 Back
               </Button>
             </Box>
-            <Box
-              sx={{
-                marginTop: 1,
-                alignItems: "flex-start",
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
-              <TextField
-                sx={{ marginTop: 4 }}
-                id="name-field"
-                label="Name"
-                variant="outlined"
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-              />
-              <TextField
-                sx={{ marginTop: 2 }}
-                id="email-field"
-                label="Email"
-                variant="outlined"
-                value={username}
-                type="email"
-                onChange={(event) => setUsername(event.target.value)}
-              />
-              <TextField
-                sx={{ marginTop: 2 }}
-                id="password-field"
-                label="Password"
-                variant="outlined"
-                value={password}
-                type="password"
-                onChange={(event) => setPassword(event.target.value)}
-              />
-              <Button
-                sx={{ marginTop: 2 }}
-                variant="contained"
-                id="login-button"
-                onClick={() => {
-                  if (username !== "" && password !== "" && name !== "") {
-                    signUpUser(username, password, name)
-                      .then((userData) => {
-                        setErrorMessage("");
-                        setShowLoginModal(false);
-                        setShowSignupPage(false); 
-                        dispatch(setReduxName(userData.name));
-                        dispatch(setUserId(userData.uid));
-                        setSnackbarSuccessMessage("Success in creating account. You have been logged in automatically.");
-                      })
-                      .catch((error) => {
-                        setSnackbarSuccessMessage("");
-                        setErrorMessage(error.message);
-                        console.log(error);
-                      });
-                  }
+              <Box
+                sx={{
+                  marginTop: 1,
+                  alignItems: "flex-start",
+                  display: "flex",
+                  flexDirection: "column",
                 }}
+                component='form'
+                onSubmit={handleSignUp}
               >
-                Sign Up
-              </Button>
-              {renderErrorField()}
-            </Box>
+                <TextField
+                  sx={{ marginTop: 4 }}
+                  id="name-field"
+                  label="Name"
+                  variant="outlined"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                />
+                <TextField
+                  sx={{ marginTop: 2 }}
+                  id="email-field"
+                  label="Email"
+                  variant="outlined"
+                  value={username}
+                  type="email"
+                  onChange={(event) => setUsername(event.target.value)}
+                />
+                <TextField
+                  sx={{ marginTop: 2 }}
+                  id="password-field"
+                  label="Password"
+                  variant="outlined"
+                  value={password}
+                  type="password"
+                  onChange={(event) => setPassword(event.target.value)}
+                />
+                <Button
+                  sx={{ marginTop: 2 }}
+                  variant="contained"
+                  id="login-button"
+                  type='submit'
+                >
+                  Sign Up
+                </Button>
+                {renderErrorField()}
+              </Box>
           </Box>
         );
       }

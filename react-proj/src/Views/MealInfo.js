@@ -3,6 +3,7 @@ import { Grid, IconButton } from "@mui/material";
 import axios from "axios";
 import { Component } from "react";
 import { connect } from "react-redux";
+import { getMealInfoWithId } from "../api/Meal";
 import { addToFavouriteFBStore, removeFromFavouriteFBStore } from "../api/User";
 import { addFavouriteById, removeFavouriteById } from '../redux/UserSlice'
 
@@ -25,27 +26,31 @@ class MealInfo extends Component {
 
     const id = urlParams.get("id");
 
-    axios
-      .get(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`)
-      .then((mealRes) => {
-        const mealData = mealRes.data.meals[0];
+    getMealInfoWithId(id).then(([mealData, ingredients]) => {
+      this.setState({ mealInfo: mealData, mealIngredients: ingredients })
+    }).catch(() => this.setState({ mealInfo: [], mealIngredients: [] }))
 
-        const mealDataEntries = Object.entries(mealData);
+    // axios
+    //   .get(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`)
+    //   .then((mealRes) => {
+    //     const mealData = mealRes.data.meals[0];
 
-        const ingredientQuantities = Object.values(mealDataEntries.filter(([key, value]) => key.startsWith("strMeasure") && value !== ''));
+    //     const mealDataEntries = Object.entries(mealData);
 
-        const ingredientNames = Object.values(
-          mealDataEntries.filter(([key, value]) =>
-            key.startsWith("strIngredient") && value !== ''
-          )
-        );
+    //     const ingredientQuantities = Object.values(mealDataEntries.filter(([key, value]) => key.startsWith("strMeasure") && value !== ''));
 
-        const ingredients = ingredientNames.map((item, index) => {
-          return [item[1], ingredientQuantities[index][1]];
-        });
+    //     const ingredientNames = Object.values(
+    //       mealDataEntries.filter(([key, value]) =>
+    //         key.startsWith("strIngredient") && value !== ''
+    //       )
+    //     );
 
-        this.setState({ mealInfo: mealData, mealIngredients: ingredients });
-      });
+    //     const ingredients = ingredientNames.map((item, index) => {
+    //       return [item[1], ingredientQuantities[index][1]];
+    //     });
+
+    //     this.setState({ mealInfo: mealData, mealIngredients: ingredients });
+    //   });
   }
 
   renderIngredients(ingredients = []) {
