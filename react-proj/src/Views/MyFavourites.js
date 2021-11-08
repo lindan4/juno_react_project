@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { removeFromFavouriteFBStore } from "../api/User";
 import { FavouriteItem } from '../Components'
 import { addFavouriteById, removeFavouriteById } from '../redux/UserSlice'
+import styles from './MyFavourites.module.css'
 
 
 
@@ -54,14 +55,7 @@ class MyFavourites extends Component {
       if (localFavouriteList.length > 0) {
 
         return (
-          <div
-                className="favourites-container"
-                style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: 'center'
-                }}
-            >
+          <div className={styles.favouritesOuterContainer}>
                 <Typography>My Favourites</Typography>
                 <Grid container display="flex" alignItems="center" direction="row" width='80%'>
                   {
@@ -85,20 +79,10 @@ class MyFavourites extends Component {
       }
       else {
         return (
-          <div
-            className="search-results-container"
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: 'center',
-              width: '100vw',
-              height: '100vh'
-            }}>
+          <div className={styles.noFavouritesOuterContainer}>
               <h3>You appear to have no favourites. Search for recipes and add them to your favourites to view them here.</h3> 
             </div>
         )
-
       }
     }
 

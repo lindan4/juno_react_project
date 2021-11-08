@@ -30,27 +30,6 @@ class MealInfo extends Component {
       this.setState({ mealInfo: mealData, mealIngredients: ingredients })
     }).catch(() => this.setState({ mealInfo: [], mealIngredients: [] }))
 
-    // axios
-    //   .get(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`)
-    //   .then((mealRes) => {
-    //     const mealData = mealRes.data.meals[0];
-
-    //     const mealDataEntries = Object.entries(mealData);
-
-    //     const ingredientQuantities = Object.values(mealDataEntries.filter(([key, value]) => key.startsWith("strMeasure") && value !== ''));
-
-    //     const ingredientNames = Object.values(
-    //       mealDataEntries.filter(([key, value]) =>
-    //         key.startsWith("strIngredient") && value !== ''
-    //       )
-    //     );
-
-    //     const ingredients = ingredientNames.map((item, index) => {
-    //       return [item[1], ingredientQuantities[index][1]];
-    //     });
-
-    //     this.setState({ mealInfo: mealData, mealIngredients: ingredients });
-    //   });
   }
 
   renderIngredients(ingredients = []) {

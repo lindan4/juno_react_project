@@ -1,4 +1,3 @@
-import './App.css';
 import { Route, Switch } from 'react-router';
 import Main from './Views/Main';
 import SearchResults from './Views/SearchResults';
