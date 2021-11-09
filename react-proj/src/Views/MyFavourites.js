@@ -2,6 +2,7 @@ import { Grid, Typography } from '@mui/material';
 import axios from 'axios';
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { fetchUserFavouritesInfo } from '../api/Meal';
 import { removeFromFavouriteFBStore } from "../api/User";
 import { FavouriteItem } from '../Components'
 import { addFavouriteById, removeFavouriteById } from '../redux/UserSlice'
@@ -19,24 +20,13 @@ class MyFavourites extends Component {
         }
     }
 
-    fetchFavourites() {
-      let promiseArray = []
-      for (let favouriteItemId of this.props.userFavourites) {
-        promiseArray.push(axios.get(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${favouriteItemId}`).then(mealRes => mealRes.data.meals[0]))
-      }
-
-      return Promise.all(promiseArray)
-
-    }
-
     componentDidMount() {
       if (!this.props.isUserLoggedIn) {
         this.props.history.push('/')
       }
 
-      this.fetchFavourites().then(favouritesInfo => {
-        this.setState({ localFavouriteList: favouritesInfo })
-
+      fetchUserFavouritesInfo(this.props.userFavourites || []).then(favouritesInfo => {
+        this.setState({ localFavouriteList: (favouritesInfo.length > 0) ? favouritesInfo : [] })
       })
     }
 
@@ -56,8 +46,8 @@ class MyFavourites extends Component {
 
         return (
           <div className={styles.favouritesOuterContainer}>
-                <Typography>My Favourites</Typography>
-                <Grid container display="flex" alignItems="center" direction="row" width='80%'>
+                <h1>My Favourites</h1>
+                <Grid container display="flex" alignItems="center" direction="row" width='80%' marginTop={3}>
                   {
                     localFavouriteList.map(favouriteItem => (
                       <Grid item key={favouriteItem.idMeal} paddingRight={5}>

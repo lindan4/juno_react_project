@@ -1,0 +1,12 @@
+.randomRecipeTitleSection {
+    display: flex;
+    flex: 1;
+    border-radius: 20px;
+    flex-direction: row;
+    justify-content: center;    
+}
+
+.randomRecipeImage {
+    border-radius: 20px;
+    height: 100vh;
+}

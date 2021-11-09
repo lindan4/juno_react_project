@@ -28,7 +28,7 @@ const Dashboard = ({ history }) => {
 
 
   useEffect(() => {
-    if (location.pathname === '/') {
+    if (location.pathname === '/juno_react_project' || location.pathname === '/') {
       setHomeButtonVisible(false)
     }
     else {

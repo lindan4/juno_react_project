@@ -2,28 +2,23 @@ import { Card, CardActionArea, CardContent, Paper, Typography } from "@mui/mater
 import { useEffect, useState } from "react";
 import axios from 'axios'
 import { getRandomRecipe } from "../api/Meal";
+import itemStyles from './RandomRecipeItem.module.css'
 
 const RandomRecipeItem = ({ onItemClick = () => {} }) => {
   
   const [randomRecipeInfo, setRandomRecipeInfo] = useState({});
 
   useEffect(() => {
-    // axios.get('https://www.themealdb.com/api/json/v1/1/random.php').then(randomRes => {
-    //         setRandomRecipeInfo(randomRes.data.meals[0])
-    //     })
     getRandomRecipe().then(meal => {
       setRandomRecipeInfo(meal)
     })
   }, [])
 
   return (
-    <Paper component={Card} elevation={1} sx={{ display: "flex" }} onClick={() => onItemClick(randomRecipeInfo.idMeal)}>
+    <Paper component={Card} elevation={1} onClick={() => onItemClick(randomRecipeInfo.idMeal)}>
       <CardActionArea>
-        <CardContent sx={{ display: 'flex', flexDirection: 'row' }}>
-          <section
-            className="random-recipe-title-section"
-            style={{ display: "flex", flex: 1, borderRadius: 10, flexDirection: 'row', justifyContent: 'center' }}
-          >
+        <CardContent sx={styles.cardContentStyle}>
+          <section className={itemStyles.randomRecipeTitleSection}>
             <Typography variant="h4" component="p">
               Featured Recipe: <br /> {randomRecipeInfo.strMeal}
             </Typography>
@@ -32,17 +27,20 @@ const RandomRecipeItem = ({ onItemClick = () => {} }) => {
             <img
               src={randomRecipeInfo.strMealThumb}
               alt='Picture of random food dish'
-              style={{
-                borderTopRightRadius: 10,
-                borderBottomRightRadius: 10,
-                height: "100%",
-              }}
+              className={itemStyles.randomRecipeImage}
             />
           </section>
         </CardContent>
       </CardActionArea>
     </Paper>
   );
+}
+
+const styles = {
+  cardContentStyle: {
+    display: 'flex',
+    flexDirection: 'row'
+  }
 }
 
 export { RandomRecipeItem }

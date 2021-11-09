@@ -11,6 +11,8 @@ import app from './firebase';
 import { clearUserState, logOnUser, setReduxName, setUserFavourites, setUserId } from './redux/UserSlice';
 import MyFavourites from './Views/MyFavourites';
 import Profile from './Views/Profile';
+import { useDispatch } from 'react-redux';
+import ErrorPage from './Views/ErrorPage';
 
 
 
@@ -27,8 +29,6 @@ const AppRoute = ({ exact, path, component: Component }) => {
       )}
     />
   )
-
-
 }
 
 
@@ -38,16 +38,18 @@ function App() {
 
   const [authUser, setAuthUser] = useState(null)
 
+  const dispatch = useDispatch()
+
 
   //Auth user listener
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, user => {
       if (user && !user.isAnonymous) {
-        store.dispatch(setUserId(user.uid))
-        store.dispatch(logOnUser())
+        dispatch(setUserId(user.uid))
+        dispatch(logOnUser())
       }
       else {
-        store.dispatch(clearUserState())
+        dispatch(clearUserState())
       }
       setAuthUser(user)
     })
@@ -64,8 +66,8 @@ function App() {
 
       const userSubscribe = onSnapshot(doc(db, 'users', authUser.uid), userData => {
         if (userData.exists()) {
-          store.dispatch(setReduxName(userData.data().name))
-          store.dispatch(setUserFavourites(userData.data().favourites || []))
+          dispatch(setReduxName(userData.data().name))
+          dispatch(setUserFavourites(userData.data().favourites || []))
         }
       })
 
@@ -85,7 +87,8 @@ function App() {
       <AppRoute path='/meal' component={MealInfo} />
       <AppRoute path='/favourites' component={MyFavourites} />
       <AppRoute path='/profile' component={Profile} />
-      <AppRoute path="/" component={Main} />
+      <AppRoute exact path="/" component={Main} />
+      <AppRoute component={ErrorPage} />
     </Switch>
   );
 }
