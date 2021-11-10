@@ -1,6 +1,5 @@
 import { Favorite, FavoriteOutlined } from "@mui/icons-material";
-import { Grid, IconButton } from "@mui/material";
-import axios from "axios";
+import { CircularProgress, Grid, IconButton } from "@mui/material";
 import { Component } from "react";
 import { connect } from "react-redux";
 import { getMealInfoWithId } from "../api/Meal";
@@ -17,7 +16,8 @@ class MealInfo extends Component {
     this.state = {
       mealInfo: {},
       mealIngredients: [],
-      isFavourited: false
+      isFavourited: false,
+      loading: false
     };
 
     this.addToFavourite = this.addToFavourite.bind(this)
@@ -29,9 +29,11 @@ class MealInfo extends Component {
 
     this.id = urlParams.get("id");
 
+    this.setState({ loading: true })
+
     getMealInfoWithId(this.id).then(([mealData, ingredients]) => {
-      this.setState({ mealInfo: mealData, mealIngredients: ingredients })
-    }).catch(() => this.setState({ mealInfo: [], mealIngredients: [] }))
+      this.setState({ mealInfo: mealData, mealIngredients: ingredients, loading: false })
+    }).catch(() => this.setState({ mealInfo: [], mealIngredients: [], loading: false }))
 
   }
 
@@ -55,7 +57,7 @@ class MealInfo extends Component {
 
     if (this.state.mealInfo.strInstructions !== undefined) {
       const stepsAsString = JSON.stringify(this.state.mealInfo.strInstructions)
-      const steps = stepsAsString.substring(1, stepsAsString.length - 1).split('\\r\\n').filter(item => item !== '')
+      const steps = stepsAsString.substring(1, stepsAsString.length - 1).split('\\r\\n').filter(item => item !== '' && !item.includes('STEP '))
 
       return steps.map((item, index) => {
         return <p key={index}>{index + 1}. {item}</p>        
@@ -120,54 +122,72 @@ class MealInfo extends Component {
     )
   }
 
+  renderLoadingHelmet() {
+    return (
+      <Helmet>
+        <title>Loading...</title>
+      </Helmet>
+    )
+  }
+
   renderContent() {
-    if (!(_.isEmpty(this.state.mealInfo)) && this.state.mealIngredients.length > 0) {
+    if (this.state.loading) {
       return (
-        <div className={styles.outerMealInfoContainer}>
-          {this.renderMealHelmet()}
-          <Grid container display="flex" alignItems="center" direction="column" width='80%'>
-            <Grid item>
-              <img
-                src={this.state.mealInfo.strMealThumb}
-                alt={`Picture of ${this.state.mealInfo.strMeal}`}
-                style={{
-                  borderTopRightRadius: 10,
-                  borderBottomRightRadius: 10,
-                  height: "100%",
-                }}
-              />
-            </Grid>
-            <Grid item sx={{ paddingBottom: 20 }}>
-              <div className={styles.upperSectionMealContent}>
-                  <h2>{this.state.mealInfo.strMeal}</h2>
-                  {this.renderFavouriteButton()}
-              </div>
-              <div>
-                <div>
-                  <h6>Ingredients</h6>
-                  {this.renderIngredients(this.state.mealIngredients)}
-                </div>
-                <div>
-                  <h6>Steps</h6>
-                  {this.renderSteps()}
-                </div>
-              </div>
-            </Grid>
-          </Grid>
+        <div className={styles.mealInfoLoadingContainer}>
+              {this.renderLoadingHelmet()}
+              <CircularProgress />
         </div>
       )
     }
     else {
-      return (
-        <div className={styles.outerMealInfoNoContentContainer}>
-          {this.renderNoMealHelmet()}
-          <h1>
-            The meal with the associated id {this.id} does not exist.
-          </h1>
-        </div>
-      )
+      if (!(_.isEmpty(this.state.mealInfo))) {
+        return (
+          <div className={styles.outerMealInfoContainer}>
+            {this.renderMealHelmet()}
+            <Grid container display="flex" alignItems="center" direction="column" width='80%'>
+              <Grid item>
+                <img
+                  src={this.state.mealInfo.strMealThumb}
+                  alt={`Picture of ${this.state.mealInfo.strMeal}`}
+                  style={{
+                    borderRadius: 20,
+                    height: "100%"
+                  }}
+                />
+              </Grid>
+              <Grid item sx={{ paddingBottom: 20, marginTop: 10 }}>
+                <div className={styles.upperSectionMealContent}>
+                    <h2>{this.state.mealInfo.strMeal}</h2>
+                    {this.renderFavouriteButton()}
+                </div>
+                <div>
+                  <div>
+                    <h6>Ingredients</h6>
+                    {this.renderIngredients(this.state.mealIngredients)}
+                  </div>
+                  <div>
+                    <h6>Steps</h6>
+                    {this.renderSteps()}
+                  </div>
+                </div>
+              </Grid>
+            </Grid>
+          </div>
+        )
+      }
+      else {
+        return (
+          <div className={styles.outerMealInfoNoContentContainer}>
+            {this.renderNoMealHelmet()}
+            <h1>
+              The meal with the associated id {this.id} does not exist.
+            </h1>
+          </div>
+        )
+      }
 
     }
+    
   }
 
   render() {

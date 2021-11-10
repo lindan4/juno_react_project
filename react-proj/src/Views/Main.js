@@ -35,7 +35,6 @@ class Main extends Component {
                     <Grid item sx={styles.lowerItemStyling}>
                         {/* Random featured recipe */}
                         <RandomRecipeItem onItemClick={id => this.props.history.push(`/meal?id=${id}`)} />
-
                     </Grid>
                 </Grid>
             </div>

@@ -166,6 +166,7 @@ const Dashboard = ({ history }) => {
           dispatch(setReduxName(userData.name));
           dispatch(setUserId(userData.uid));
           setSnackbarSuccessMessage("Success in creating account. You have been logged in automatically.");
+          showSuccessfulSnackbar(true)
         })
         .catch((error) => {
           setSnackbarSuccessMessage("");

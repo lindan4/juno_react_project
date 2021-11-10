@@ -4,6 +4,7 @@ import { Component } from 'react'
 import { fetchMeals } from '../api/Meal';
 import { RecipeItem, SearchBar } from '../Components'
 import { Helmet } from 'react-helmet'
+import styles from './SearchResults.module.css'
 
 
 class SearchResults extends Component {
@@ -64,15 +65,7 @@ class SearchResults extends Component {
       if (this.state.loading) {
         return (
           <div
-            className="search-results-container"
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: 'center',
-              width: '100vw',
-              height: '100vh'
-            }}>
+            className={styles.searchResultsLoadingContainer}>
                 {this.renderLoadingHelmet()}
                 <CircularProgress />
           </div>
@@ -80,14 +73,7 @@ class SearchResults extends Component {
       }
       else {
         return (
-            <div
-              className="search-results-container"
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-              }}
-            >
+            <div className={styles.searchResultsContainer}>
               {this.renderResultsHelmet()}
               <Grid container display="flex" alignItems="center" direction="column">
                 <Grid item container direction='column' alignItems='center'>
