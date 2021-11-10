@@ -8,6 +8,7 @@ import { addToFavouriteFBStore, removeFromFavouriteFBStore } from "../api/User";
 import { addFavouriteById, removeFavouriteById } from '../redux/UserSlice'
 import _ from 'lodash'
 import styles from './MealInfo.module.css'
+import { Helmet } from "react-helmet";
 
 class MealInfo extends Component {
   constructor(props) {
@@ -103,10 +104,27 @@ class MealInfo extends Component {
     }
   }
 
+  renderMealHelmet() {
+    return (
+      <Helmet>
+        <title>{this.state.mealInfo.strMeal} | The Recipe Archive</title>
+      </Helmet>
+    )
+  }
+
+  renderNoMealHelmet() {
+    return (
+      <Helmet>
+        <title>Meal not found | The Recipe Archive</title>
+      </Helmet>
+    )
+  }
+
   renderContent() {
     if (!(_.isEmpty(this.state.mealInfo)) && this.state.mealIngredients.length > 0) {
       return (
         <div className={styles.outerMealInfoContainer}>
+          {this.renderMealHelmet()}
           <Grid container display="flex" alignItems="center" direction="column" width='80%'>
             <Grid item>
               <img
@@ -142,6 +160,7 @@ class MealInfo extends Component {
     else {
       return (
         <div className={styles.outerMealInfoNoContentContainer}>
+          {this.renderNoMealHelmet()}
           <h1>
             The meal with the associated id {this.id} does not exist.
           </h1>

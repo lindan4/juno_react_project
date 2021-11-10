@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Grid } from '@mui/material';
 import { SearchBar, RandomRecipeItem } from '../Components';
 import mainStyles from './Main.module.css'
+import { Helmet } from 'react-helmet';
 
 class Main extends Component {
 
@@ -9,9 +10,18 @@ class Main extends Component {
         super(props)        
     }
 
+    renderHelmet(){
+        return (
+            <Helmet>
+                <title>Home | The Recipe Archive</title>
+            </Helmet>
+        )
+    }
+
     render() {
         return (
             <div className={mainStyles.mainContainer}>
+                {this.renderHelmet()}
                 <Grid container spacing={1} width='80%' justifyContent='center' direction="column">
                     <Grid item sx={styles.itemStyle}>
                         <h1>The Recipe Archive</h1>

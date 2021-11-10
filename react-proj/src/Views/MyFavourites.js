@@ -39,12 +39,13 @@ class MyFavourites extends Component {
       }
     }
 
+
+
     renderFavouriteContent() {
 
       const { localFavouriteList = []} = this.state
 
       if (localFavouriteList.length > 0) {
-
         return (
           <div className={styles.favouritesOuterContainer}>
                 <h1>My Favourites</h1>

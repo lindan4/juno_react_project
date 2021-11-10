@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { Grid, Typography, TextField, Button, Alert, AlertTitle } from '@mui/material'
 import { INVALID_CREDENTIALS, NAME_CHANGE_ERROR, NAME_CHANGE_SUCCESS ,PASSWORDS_SAME,PASSWORD_CHANGE_SUCCESS, PASSWORD_MISMATCH, SECONDARY_COLOUR } from '../Constants'
 import { updateFBName, updateFBPassword } from '../api/User'
+import { Helmet } from 'react-helmet'
 
 
 class Profile extends Component {
@@ -23,7 +24,8 @@ class Profile extends Component {
     }
 
     componentDidMount() {
-        if (!this.props.isUserLoggedIn) {
+        let authLocal = localStorage.getItem('authUser')
+        if (!authLocal) {
             this.props.history.push('/')
         }    
     }
@@ -37,6 +39,14 @@ class Profile extends Component {
                 </Alert>
             )
         }
+    }
+
+    renderHelmet() {
+        return (
+            <Helmet>
+                <title>Profile | The Recipe Archive</title>
+            </Helmet>
+        )
     }
 
     renderErrorAlert() {
@@ -138,6 +148,7 @@ class Profile extends Component {
                 justifyContent: "center",
               }}
             >
+                {this.renderHelmet()}
                 <Grid container width="60%"  borderRadius={10} border={`2px solid ${SECONDARY_COLOUR}`} direction='column' padding={5}>
                     <form onSubmit={this.handleSubmit}>
                         <Grid container item direction='column'>
