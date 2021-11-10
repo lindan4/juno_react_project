@@ -21,7 +21,8 @@ class MyFavourites extends Component {
     }
 
     componentDidMount() {
-      if (!this.props.isUserLoggedIn) {
+      let authLocal = localStorage.getItem('authUser')
+      if (!authLocal) {
         this.props.history.push('/')
       }
 
@@ -31,8 +32,8 @@ class MyFavourites extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-      if (prevProps.userFavourites.length > this.props.userFavourites) {
-        this.fetchFavourites().then(favouritesInfo => {
+      if (prevProps.userFavourites.length !== this.props.userFavourites.length) {
+        fetchUserFavouritesInfo(this.props.userFavourites || []).then(favouritesInfo => {
           this.setState({ localFavouriteList: favouritesInfo })
         })
       }

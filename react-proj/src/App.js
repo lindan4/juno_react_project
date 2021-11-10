@@ -15,7 +15,6 @@ import { useDispatch } from 'react-redux';
 import ErrorPage from './Views/ErrorPage';
 
 
-
 const AppRoute = ({ exact, path, component: Component }) => {
   return (
     <Route
@@ -45,10 +44,12 @@ function App() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, user => {
       if (user && !user.isAnonymous) {
+        localStorage.setItem('authUser', user)
         dispatch(setUserId(user.uid))
         dispatch(logOnUser())
       }
       else {
+        localStorage.removeItem('authUser')
         dispatch(clearUserState())
       }
       setAuthUser(user)
