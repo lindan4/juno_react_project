@@ -43,7 +43,7 @@ const RandomRecipeItem = ({ onItemClick = () => {} }) => {
   }
 
   return (
-    <Paper component={Card} elevation={1} onClick={() => onItemClick(randomRecipeInfo.idMeal)} sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+    <Paper component={Card} elevation={1} onClick={() => onItemClick(randomRecipeInfo.idMeal)} sx={styles.paperStyle}>
       {renderContent()}
     </Paper>
   );
@@ -53,6 +53,12 @@ const styles = {
   cardContentStyle: {
     display: 'flex',
     flexDirection: 'row'
+  },
+  paperStyle: {
+    display: 'flex', 
+    flexDirection: 'row', 
+    justifyContent: 'center', 
+    borderRadius: 10
   }
 }
 

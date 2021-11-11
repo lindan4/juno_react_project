@@ -31,6 +31,7 @@ const SearchBar = ({ initialValue = '', onSearchPress = () => {} }) => {
       <IconButton
         type="submit"
         aria-label="search"
+        disabled={searchValue === ''}
       >
         <SearchIcon />
       </IconButton>
