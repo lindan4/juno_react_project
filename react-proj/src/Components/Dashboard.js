@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUser, logoutUser, signUpUser } from "../api/User";
 import { setReduxName, setUserId } from "../redux/UserSlice";
 import { useLocation } from 'react-router-dom'
-import { SECONDARY_COLOUR } from "../Constants";
+import { SECONDARY_COLOUR, CONTAINED_DIM_COLOUR } from "../Constants";
 
 const Dashboard = ({ history }) => {
   const dispatch = useDispatch();
@@ -175,6 +175,9 @@ const Dashboard = ({ history }) => {
             setErrorMessage('An account associated with this email exists.')
 
           }
+          else if (error.code === 'auth/weak-password') {
+            setErrorMessage('You password must be at least 6 characters.')
+          }
           else {
             setErrorMessage(error.message);
 
@@ -221,9 +224,10 @@ const Dashboard = ({ history }) => {
                     onChange={(event) => setPassword(event.target.value)}
                   />
                   <Button
-                    sx={{ marginTop: 2, backgroundColor: SECONDARY_COLOUR }}
+                    sx={styles.containedButtonStyling}
                     variant="contained"
                     id="login-button"
+                    disabled={username === '' || password === ''}
                     type='submit'
                   >
                     Login
@@ -310,10 +314,11 @@ const Dashboard = ({ history }) => {
                   onChange={(event) => setPassword(event.target.value)}
                 />
                 <Button
-                  sx={{ marginTop: 2, backgroundColor: SECONDARY_COLOUR }}
+                  sx={styles.containedButtonStyling}
                   variant="contained"
                   id="login-button"
                   type='submit'
+                  disabled={name === '' || username === '' || password === ''}
                 >
                   Sign Up
                 </Button>
@@ -370,6 +375,13 @@ const styles = {
     border: "2px solid #000",
     boxShadow: 24,
     p: 4,
+  },
+  containedButtonStyling: {
+    marginTop: 2,
+    backgroundColor: SECONDARY_COLOUR,
+    ":hover": {
+      backgroundColor: CONTAINED_DIM_COLOUR,
+    },
   },
 };
 

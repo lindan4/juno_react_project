@@ -1,5 +1,7 @@
 export const PRIMARY_COLOUR = '#ffe4c4'
 export const SECONDARY_COLOUR = '#b3a589'
+export const CONTAINED_DIM_COLOUR = '#736a57'
+
 
 export const NAME_CHANGE_SUCCESS = 'name-change-success'
 export const NAME_CHANGE_ERROR = 'name-change-error'
