@@ -1,6 +1,5 @@
 import { Card, CardActionArea, CardContent, Paper, Typography, CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
-import axios from 'axios'
 import { getRandomRecipe } from "../api/Meal";
 import itemStyles from './RandomRecipeItem.module.css'
 

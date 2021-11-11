@@ -27,17 +27,10 @@ export const userSlice = createSlice({
         setUserFavourites: (state, action) => {
             state.userFavourites = action.payload
         },
-        addFavouriteById: (state, action) => {
-            state.userFavourites.push(action.payload)
-        },
-        removeFavouriteById: (state, action) => {
-            const favouriteArrayWithoutId = state.userFavourites.filter(item => item !== action.payload)
-            state.userFavourites = favouriteArrayWithoutId
-        },
         clearUserState: () => initialState
     }
 })
 
-export const { setReduxName, setUserId, setUserFavourites, addFavouriteById, removeFavouriteById, clearUserState, logOnUser, logOutUser } = userSlice.actions
+export const { setReduxName, setUserId, setUserFavourites, clearUserState, logOnUser, logOutUser } = userSlice.actions
 
 export default userSlice.reducer

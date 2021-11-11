@@ -22,7 +22,6 @@ export const getRandomRecipe = () => {
   return new Promise((resolve, reject) => {
     axios.get('https://www.themealdb.com/api/json/v1/1/random.php').then(randomRes => {
       resolve(randomRes.data.meals[0])
-            // setRandomRecipeInfo(randomRes.data.meals[0])
     }).catch(error => {
       console.log(error)
       reject({})
@@ -45,14 +44,14 @@ export const getMealInfoWithId = id => {
 
             const ingredientQuantities = Object.values(
               mealDataEntries.filter(
-                ([key, value]) => key.startsWith("strMeasure") && value !== ""
+                ([key, value]) => key.startsWith("strMeasure") && value !== "" && value !== null
               )
             );
 
             const ingredientNames = Object.values(
               mealDataEntries.filter(
                 ([key, value]) =>
-                  key.startsWith("strIngredient") && value !== ""
+                  key.startsWith("strIngredient") && value !== "" && value !== null
               )
             );
 

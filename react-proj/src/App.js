@@ -3,7 +3,6 @@ import Main from './Views/Main';
 import SearchResults from './Views/SearchResults';
 import MealInfo from './Views/MealInfo';
 import { Dashboard } from './Components';
-import store from './store';
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { getFirestore, onSnapshot, doc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';

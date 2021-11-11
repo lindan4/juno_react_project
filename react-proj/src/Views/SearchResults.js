@@ -1,5 +1,4 @@
 import { Grid, Typography, CircularProgress } from '@mui/material'
-import axios from 'axios'
 import { Component } from 'react'
 import { fetchMeals } from '../api/Meal';
 import { RecipeItem, SearchBar } from '../Components'

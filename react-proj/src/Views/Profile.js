@@ -31,6 +31,12 @@ class Profile extends Component {
         }    
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.name !== this.props.name) {
+            this.setState({ enteredName: this.props.name })
+        }
+    }
+
     renderSuccessAlert() {
         if (this.state.successMessage.length > 0) {
             return (

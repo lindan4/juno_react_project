@@ -4,7 +4,6 @@ import { Component } from "react";
 import { connect } from "react-redux";
 import { getMealInfoWithId } from "../api/Meal";
 import { addToFavouriteFBStore, removeFromFavouriteFBStore } from "../api/User";
-import { addFavouriteById, removeFavouriteById } from '../redux/UserSlice'
 import _ from 'lodash'
 import styles from './MealInfo.module.css'
 import { Helmet } from "react-helmet";
@@ -71,7 +70,6 @@ class MealInfo extends Component {
     const mealId = this.state.mealInfo.idMeal
 
     addToFavouriteFBStore(mealId).then(() => {
-      this.props.addFavouriteById(mealId)
       this.setState({ isFavourited: true })
     })
 
@@ -82,7 +80,6 @@ class MealInfo extends Component {
     const mealId = this.state.mealInfo.idMeal
 
     removeFromFavouriteFBStore(mealId).then(() => {
-      this.props.removeFavouriteById(mealId)
       this.setState({ isFavourited: false })
     })
   }
@@ -140,6 +137,7 @@ class MealInfo extends Component {
       )
     }
     else {
+      console.log(this.state.mealInfo)
       if (!(_.isEmpty(this.state.mealInfo))) {
         return (
           <div className={styles.outerMealInfoContainer}>
@@ -202,10 +200,4 @@ const mapStateToProps = state => {
 
 }
 
-
-const mapDispatchToProps = {
-    addFavouriteById,
-    removeFavouriteById
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(MealInfo);
+export default connect(mapStateToProps)(MealInfo);
