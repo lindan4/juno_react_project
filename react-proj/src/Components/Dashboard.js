@@ -132,6 +132,16 @@ const Dashboard = ({ history }) => {
     }
   };
 
+  const handleBackdropClick = () => {
+    setShowLoginModal(false)
+    setShowSignupPage(false)
+    setUsername("");
+    setPassword("");
+    setShowSuccessfulSnackbar(false)
+    setErrorMessage("")
+    setSnackbarSuccessMessage("")
+  }
+
   const handleLogin = event => {
     event.preventDefault()
     if (username !== "" && password !== "") {
@@ -162,7 +172,7 @@ const Dashboard = ({ history }) => {
       signUpUser(username, password, name)
         .then((userData) => {
           setSnackbarSuccessMessage("Success in creating account. You have been logged in automatically.");
-          showSuccessfulSnackbar(true)
+          setShowSuccessfulSnackbar(true)
           setErrorMessage("");
           setShowLoginModal(false);
           setShowSignupPage(false); 
@@ -342,7 +352,7 @@ const Dashboard = ({ history }) => {
       )}
       {renderDashboardItems()}
       {!loggedIn && <Modal
-          onBackdropClick={() => setShowLoginModal(false)}
+          onBackdropClick={handleBackdropClick}
           open={showLoginModal}
           handleMenuAnchorClose={() => setShowLoginModal(false)}
         >
