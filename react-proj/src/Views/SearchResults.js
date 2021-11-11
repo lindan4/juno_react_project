@@ -1,8 +1,9 @@
 import { Grid, Typography, CircularProgress } from '@mui/material'
-import axios from 'axios'
 import { Component } from 'react'
 import { fetchMeals } from '../api/Meal';
 import { RecipeItem, SearchBar } from '../Components'
+import { Helmet } from 'react-helmet'
+import styles from './SearchResults.module.css'
 
 
 class SearchResults extends Component {
@@ -12,23 +13,11 @@ class SearchResults extends Component {
     this.state = {
       resultsLoading: false,
       searchResults: [],
-      // searchQuery: '',
       loading: true
     };
   }
 
   fetchQuery(keyword) {
-    // this.setState({ searchQuery: keyword })
-    // axios
-    //   .get(`https://www.themealdb.com/api/json/v1/1/search.php?s=${keyword}`)
-    //   .then((searchRes) => {
-    //     if (searchRes.data.meals) {
-    //       this.setState({ searchResults: searchRes.data.meals, loading: false });
-    //     } else {
-    //       this.setState({ searchResults: [], loading: false });
-    //     }
-    //   })
-    //   .catch((error) => console.log(error));
     fetchMeals(keyword).then(mealResults => {
       this.setState({ searchResults: mealResults, loading: false });
     }).catch(() => {
@@ -55,33 +44,36 @@ class SearchResults extends Component {
     }
   }
 
+  renderLoadingHelmet() {
+    return (
+      <Helmet>
+        <title>Loading...</title>
+      </Helmet>
+    )
+  }
+
+  renderResultsHelmet() {
+    return (
+      <Helmet>
+        <title>Search results for {this.keyword} | The Recipe Archive</title>
+      </Helmet>
+    )
+  }
+
   renderContent() {
       if (this.state.loading) {
         return (
           <div
-            className="search-results-container"
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: 'center',
-              width: '100vw',
-              height: '100vh'
-            }}>
+            className={styles.searchResultsLoadingContainer}>
+                {this.renderLoadingHelmet()}
                 <CircularProgress />
           </div>
         );
       }
       else {
         return (
-            <div
-              className="search-results-container"
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-              }}
-            >
+            <div className={styles.searchResultsContainer}>
+              {this.renderResultsHelmet()}
               <Grid container display="flex" alignItems="center" direction="column">
                 <Grid item container direction='column' alignItems='center'>
                   <SearchBar initialValue={this.keyword} onSearchPress={value => {
@@ -126,7 +118,7 @@ class SearchResults extends Component {
   }
 
   render() {
-    return this.renderContent()
+    return this.renderContent()   
   }
 }
 

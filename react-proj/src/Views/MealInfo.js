@@ -1,11 +1,12 @@
 import { Favorite, FavoriteOutlined } from "@mui/icons-material";
-import { Grid, IconButton } from "@mui/material";
-import axios from "axios";
+import { CircularProgress, Grid, IconButton } from "@mui/material";
 import { Component } from "react";
 import { connect } from "react-redux";
 import { getMealInfoWithId } from "../api/Meal";
 import { addToFavouriteFBStore, removeFromFavouriteFBStore } from "../api/User";
-import { addFavouriteById, removeFavouriteById } from '../redux/UserSlice'
+import _ from 'lodash'
+import styles from './MealInfo.module.css'
+import { Helmet } from "react-helmet";
 
 class MealInfo extends Component {
   constructor(props) {
@@ -14,7 +15,8 @@ class MealInfo extends Component {
     this.state = {
       mealInfo: {},
       mealIngredients: [],
-      isFavourited: false
+      isFavourited: false,
+      loading: false
     };
 
     this.addToFavourite = this.addToFavourite.bind(this)
@@ -24,33 +26,14 @@ class MealInfo extends Component {
   componentDidMount() {
     const urlParams = new URLSearchParams(this.props.location.search);
 
-    const id = urlParams.get("id");
+    this.id = urlParams.get("id");
 
-    getMealInfoWithId(id).then(([mealData, ingredients]) => {
-      this.setState({ mealInfo: mealData, mealIngredients: ingredients })
-    }).catch(() => this.setState({ mealInfo: [], mealIngredients: [] }))
+    this.setState({ loading: true })
 
-    // axios
-    //   .get(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`)
-    //   .then((mealRes) => {
-    //     const mealData = mealRes.data.meals[0];
+    getMealInfoWithId(this.id).then(([mealData, ingredients]) => {
+      this.setState({ mealInfo: mealData, mealIngredients: ingredients, loading: false })
+    }).catch(() => this.setState({ mealInfo: [], mealIngredients: [], loading: false }))
 
-    //     const mealDataEntries = Object.entries(mealData);
-
-    //     const ingredientQuantities = Object.values(mealDataEntries.filter(([key, value]) => key.startsWith("strMeasure") && value !== ''));
-
-    //     const ingredientNames = Object.values(
-    //       mealDataEntries.filter(([key, value]) =>
-    //         key.startsWith("strIngredient") && value !== ''
-    //       )
-    //     );
-
-    //     const ingredients = ingredientNames.map((item, index) => {
-    //       return [item[1], ingredientQuantities[index][1]];
-    //     });
-
-    //     this.setState({ mealInfo: mealData, mealIngredients: ingredients });
-    //   });
   }
 
   renderIngredients(ingredients = []) {
@@ -59,7 +42,7 @@ class MealInfo extends Component {
         <ul>
           {ingredients.map(([name, quantity]) => {
             return (
-              <li>
+              <li key={`${name}${quantity}`}>
                 {quantity} - {name}
               </li>
             );
@@ -73,10 +56,10 @@ class MealInfo extends Component {
 
     if (this.state.mealInfo.strInstructions !== undefined) {
       const stepsAsString = JSON.stringify(this.state.mealInfo.strInstructions)
-      const steps = stepsAsString.substring(1, stepsAsString.length - 1).split('\\r\\n').filter(item => item !== '')
+      const steps = stepsAsString.substring(1, stepsAsString.length - 1).split('\\r\\n').filter(item => item !== '' && !item.includes('STEP '))
 
       return steps.map((item, index) => {
-        return <p>{index + 1}. {item}</p>        
+        return <p key={index}>{index + 1}. {item}</p>        
       });
 
     }
@@ -87,7 +70,6 @@ class MealInfo extends Component {
     const mealId = this.state.mealInfo.idMeal
 
     addToFavouriteFBStore(mealId).then(() => {
-      this.props.addFavouriteById(mealId)
       this.setState({ isFavourited: true })
     })
 
@@ -98,7 +80,6 @@ class MealInfo extends Component {
     const mealId = this.state.mealInfo.idMeal
 
     removeFromFavouriteFBStore(mealId).then(() => {
-      this.props.removeFavouriteById(mealId)
       this.setState({ isFavourited: false })
     })
   }
@@ -122,50 +103,93 @@ class MealInfo extends Component {
     }
   }
 
-  render() {
-
-    console.log(this.props.userFavourites)
-
+  renderMealHelmet() {
     return (
-      <div
-        className="search-results-container"
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "center"
-        }}
-      >
-        <Grid container display="flex" alignItems="center" direction="column" width='80%'>
-          <Grid item>
-            <img
-              src={this.state.mealInfo.strMealThumb}
-              alt={`Picture of ${this.state.mealInfo.strMeal}`}
-              style={{
-                borderTopRightRadius: 10,
-                borderBottomRightRadius: 10,
-                height: "100%",
-              }}
-            />
-          </Grid>
-          <Grid item sx={{ paddingBottom: 20 }}>
-            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                <h2>{this.state.mealInfo.strMeal}</h2>
-                {this.renderFavouriteButton()}
-            </div>
-            <div>
-              <div>
-                <h6>Ingredients</h6>
-                {this.renderIngredients(this.state.mealIngredients)}
-              </div>
-              <div>
-                <h6>Steps</h6>
-                {this.renderSteps()}
-              </div>
-            </div>
-          </Grid>
-        </Grid>
-      </div>
-    );
+      <Helmet>
+        <title>{this.state.mealInfo.strMeal} | The Recipe Archive</title>
+      </Helmet>
+    )
+  }
+
+  renderNoMealHelmet() {
+    return (
+      <Helmet>
+        <title>Meal not found | The Recipe Archive</title>
+      </Helmet>
+    )
+  }
+
+  renderLoadingHelmet() {
+    return (
+      <Helmet>
+        <title>Loading...</title>
+      </Helmet>
+    )
+  }
+
+  renderContent() {
+    if (this.state.loading) {
+      return (
+        <div className={styles.mealInfoLoadingContainer}>
+              {this.renderLoadingHelmet()}
+              <CircularProgress />
+        </div>
+      )
+    }
+    else {
+      console.log(this.state.mealInfo)
+      if (!(_.isEmpty(this.state.mealInfo))) {
+        return (
+          <div className={styles.outerMealInfoContainer}>
+            {this.renderMealHelmet()}
+            <Grid container display="flex" alignItems="center" direction="column" width='80%'>
+              <Grid item>
+                <img
+                  src={this.state.mealInfo.strMealThumb}
+                  alt={`Picture of ${this.state.mealInfo.strMeal}`}
+                  style={{
+                    borderRadius: 20,
+                    height: "100%"
+                  }}
+                />
+              </Grid>
+              <Grid item sx={{ paddingBottom: 20, marginTop: 10 }}>
+                <div className={styles.upperSectionMealContent}>
+                    <h2>{this.state.mealInfo.strMeal}</h2>
+                    {this.renderFavouriteButton()}
+                </div>
+                <div>
+                  <div>
+                    <h6>Ingredients</h6>
+                    {this.renderIngredients(this.state.mealIngredients)}
+                  </div>
+                  <div>
+                    <h6>Steps</h6>
+                    {this.renderSteps()}
+                  </div>
+                </div>
+              </Grid>
+            </Grid>
+          </div>
+        )
+      }
+      else {
+        return (
+          <div className={styles.outerMealInfoNoContentContainer}>
+            {this.renderNoMealHelmet()}
+            <h1>
+              The meal with the associated id {this.id} does not exist.
+            </h1>
+          </div>
+        )
+      }
+
+    }
+    
+  }
+
+  render() {
+    return this.renderContent()
   }
 }
 
@@ -176,10 +200,4 @@ const mapStateToProps = state => {
 
 }
 
-
-const mapDispatchToProps = {
-    addFavouriteById,
-    removeFavouriteById
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(MealInfo);
+export default connect(mapStateToProps)(MealInfo);

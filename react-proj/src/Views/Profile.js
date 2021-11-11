@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import { Grid, Typography, TextField, Button, Alert, AlertTitle } from '@mui/material'
 import { INVALID_CREDENTIALS, NAME_CHANGE_ERROR, NAME_CHANGE_SUCCESS ,PASSWORDS_SAME,PASSWORD_CHANGE_SUCCESS, PASSWORD_MISMATCH, SECONDARY_COLOUR } from '../Constants'
 import { updateFBName, updateFBPassword } from '../api/User'
+import { Helmet } from 'react-helmet'
+import styles from './Profile.module.css'
 
 
 class Profile extends Component {
@@ -23,9 +25,16 @@ class Profile extends Component {
     }
 
     componentDidMount() {
-        if (!this.props.isUserLoggedIn) {
+        let authLocal = localStorage.getItem('authUser')
+        if (!authLocal) {
             this.props.history.push('/')
         }    
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.name !== this.props.name) {
+            this.setState({ enteredName: this.props.name })
+        }
     }
 
     renderSuccessAlert() {
@@ -37,6 +46,14 @@ class Profile extends Component {
                 </Alert>
             )
         }
+    }
+
+    renderHelmet() {
+        return (
+            <Helmet>
+                <title>Profile | The Recipe Archive</title>
+            </Helmet>
+        )
     }
 
     renderErrorAlert() {
@@ -130,14 +147,8 @@ class Profile extends Component {
 
     render() {
         return (
-            <div
-              className="search-results-container"
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-              }}
-            >
+            <div className={styles.outerProfileContainer}>
+                {this.renderHelmet()}
                 <Grid container width="60%"  borderRadius={10} border={`2px solid ${SECONDARY_COLOUR}`} direction='column' padding={5}>
                     <form onSubmit={this.handleSubmit}>
                         <Grid container item direction='column'>

@@ -1,10 +1,11 @@
-import { Grid, Typography } from '@mui/material';
-import axios from 'axios';
+import { CircularProgress, Grid } from '@mui/material';
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { fetchUserFavouritesInfo } from '../api/Meal';
 import { removeFromFavouriteFBStore } from "../api/User";
 import { FavouriteItem } from '../Components'
-import { addFavouriteById, removeFavouriteById } from '../redux/UserSlice'
+import styles from './MyFavourites.module.css'
+import { Helmet } from 'react-helmet'
 
 
 
@@ -14,103 +15,118 @@ class MyFavourites extends Component {
         super(props)
 
         this.state = {
-          localFavouriteList: []
+          localFavouriteList: [],
+          loading: false
         }
     }
 
-    fetchFavourites() {
-      let promiseArray = []
-      for (let favouriteItemId of this.props.userFavourites) {
-        promiseArray.push(axios.get(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${favouriteItemId}`).then(mealRes => mealRes.data.meals[0]))
-      }
-
-      return Promise.all(promiseArray)
-
-    }
-
     componentDidMount() {
-      if (!this.props.isUserLoggedIn) {
+      let authLocal = localStorage.getItem('authUser')
+      if (!authLocal) {
         this.props.history.push('/')
       }
 
-      this.fetchFavourites().then(favouritesInfo => {
-        this.setState({ localFavouriteList: favouritesInfo })
-
+      this.setState({ loading: true })
+    
+      fetchUserFavouritesInfo(this.props.userFavourites || []).then(favouritesInfo => {
+        this.setState({ localFavouriteList: (favouritesInfo.length > 0) ? favouritesInfo : [], loading: false })
       })
     }
 
     componentDidUpdate(prevProps, prevState) {
-      if (prevProps.userFavourites.length > this.props.userFavourites) {
-        this.fetchFavourites().then(favouritesInfo => {
-          this.setState({ localFavouriteList: favouritesInfo })
+      if (prevProps.userFavourites.length !== this.props.userFavourites.length) {
+        this.setState({ loading: true })
+        fetchUserFavouritesInfo(this.props.userFavourites || []).then(favouritesInfo => {
+          this.setState({ localFavouriteList: (favouritesInfo.length > 0) ? favouritesInfo : [], loading: false })
         })
       }
     }
 
-    renderFavouriteContent() {
-
-      const { localFavouriteList = []} = this.state
-
-      if (localFavouriteList.length > 0) {
-
-        return (
-          <div
-                className="favourites-container"
-                style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: 'center'
-                }}
-            >
-                <Typography>My Favourites</Typography>
-                <Grid container display="flex" alignItems="center" direction="row" width='80%'>
-                  {
-                    localFavouriteList.map(favouriteItem => (
-                      <Grid item key={favouriteItem.idMeal} paddingRight={5}>
-                        <FavouriteItem 
-                          item={favouriteItem}
-                          onPress={() => this.props.history.push(`/meal?id=${favouriteItem.idMeal}`)}
-                          removeFromFavourite={event => {
-                            event.stopPropagation()
-                            removeFromFavouriteFBStore(favouriteItem.idMeal)
-                          }} />
-                      </Grid>
-
-                    ))
-                  }
-                </Grid>
-          </div>
-
-        )
-      }
-      else {
-        return (
-          <div
-            className="search-results-container"
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: 'center',
-              width: '100vw',
-              height: '100vh'
-            }}>
-              <h3>You appear to have no favourites. Search for recipes and add them to your favourites to view them here.</h3> 
-            </div>
-        )
-
-      }
+    renderFavouriteHelmet() {
+      return (
+        <Helmet>
+          <title>My Favourites</title>
+        </Helmet>
+      )
     }
 
 
+    renderLoadingHelmet() {
+      return (
+        <Helmet>
+          <title>Loading...</title>
+        </Helmet>
+      )
+    }
+
+
+    renderFavouriteContent() {
+
+      if (!this.state.loading) {
+        if (this.state.localFavouriteList.length > 0) {
+          return (
+            <div className={styles.favouritesOuterContainer}>
+                  {this.renderFavouriteHelmet()}
+                  <h1>My Favourites</h1>
+                  <Grid container display="flex" direction="row" width='80%' marginTop={3}>
+                    {
+                      this.state.localFavouriteList.map(favouriteItem => {
+                        console.log(Object.keys(favouriteItem))
+                        return (
+                          <Grid
+                            item
+                            key={favouriteItem.strMeal}
+                            paddingRight={3}
+                            paddingBottom={3}
+
+                          >
+                            <FavouriteItem
+                              item={favouriteItem}
+                              onPress={() =>
+                                this.props.history.push(
+                                  `/meal?id=${favouriteItem.idMeal}`
+                                )
+                              }
+                              removeFromFavourite={(event) => {
+                                event.stopPropagation();
+                                removeFromFavouriteFBStore(
+                                  favouriteItem.idMeal
+                                );
+                              }}
+                            />
+                          </Grid>
+                        );
+                        
+  
+                        })
+                    }
+                  </Grid>
+            </div>
+          )
+        }
+        else {
+          return (
+            <div className={styles.noFavouritesOuterContainer}>
+                {this.renderFavouriteHelmet()}
+                <h3>You appear to have no favourites. Search for recipes and add them to your favourites to view them here.</h3> 
+              </div>
+          )
+        }
+      }
+      else {
+        return (
+          <div className={styles.favouritesLoadingContainer}>
+            {this.renderLoadingHelmet()}
+            <CircularProgress />
+          </div>
+        )
+      }
+    }
 
     render() {
         return this.renderFavouriteContent()
     }
 
-
-
-    
 }
 
 const mapStateToProps = state => {
@@ -119,9 +135,4 @@ const mapStateToProps = state => {
     return { userFavourites, isUserLoggedIn }
 }
 
-const mapDispatchToProps = {
-    addFavouriteById,
-    removeFavouriteById
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(MyFavourites)
+export default connect(mapStateToProps)(MyFavourites)

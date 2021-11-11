@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { Grid } from '@mui/material';
 import { SearchBar, RandomRecipeItem } from '../Components';
+import mainStyles from './Main.module.css'
+import { Helmet } from 'react-helmet';
 
 class Main extends Component {
 
@@ -8,29 +10,47 @@ class Main extends Component {
         super(props)        
     }
 
+    renderHelmet(){
+        return (
+            <Helmet>
+                <title>Home | The Recipe Archive</title>
+            </Helmet>
+        )
+    }
+
     render() {
         return (
-            <div className="App" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+            <div className={mainStyles.mainContainer}>
+                {this.renderHelmet()}
                 <Grid container spacing={1} width='80%' justifyContent='center' direction="column">
-                    <Grid item>
+                    <Grid item sx={styles.itemStyle}>
                         <h1>The Recipe Archive</h1>
                     </Grid>
-                    <Grid item sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                    <Grid item sx={styles.itemStyle}>
                         {/* Search bar */}
                         <SearchBar onSearchPress={value => {
                             this.props.history.push(`/search?keyword=${value}`)
                         }}/>
                     </Grid>
-                    <Grid item>
+                    <Grid item sx={styles.lowerItemStyling}>
                         {/* Random featured recipe */}
                         <RandomRecipeItem onItemClick={id => this.props.history.push(`/meal?id=${id}`)} />
-
                     </Grid>
                 </Grid>
             </div>
         )
     }
+}
 
+const styles = {
+    itemStyle: {
+        display: 'flex', 
+        flexDirection: 'row',
+        justifyContent: 'center'
+    },
+    lowerItemStyling: {
+        paddingBottom: 20
+    }
 }
 
 export default Main

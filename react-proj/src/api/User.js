@@ -1,4 +1,4 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, EmailAuthProvider, reauthenticateWithCredential, updatePassword, setPersistence } from "firebase/auth";
 import { getFirestore, collection, setDoc, doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { PASSWORD_CHANGE_ERROR, PASSWORD_CHANGE_SUCCESS, PASSWORD_MISMATCH, INVALID_CREDENTIALS, NAME_CHANGE_SUCCESS, NAME_CHANGE_ERROR, PASSWORDS_SAME } from "../Constants";
 import app from '../firebase'

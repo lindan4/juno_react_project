@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUser, logoutUser, signUpUser } from "../api/User";
 import { setReduxName, setUserId } from "../redux/UserSlice";
 import { useLocation } from 'react-router-dom'
+import { SECONDARY_COLOUR } from "../Constants";
 
 const Dashboard = ({ history }) => {
   const dispatch = useDispatch();
@@ -28,7 +29,7 @@ const Dashboard = ({ history }) => {
 
 
   useEffect(() => {
-    if (location.pathname === '/') {
+    if (location.pathname === '/juno_react_project' || location.pathname === '/') {
       setHomeButtonVisible(false)
     }
     else {
@@ -160,16 +161,24 @@ const Dashboard = ({ history }) => {
     if (username !== "" && password !== "" && name !== "") {
       signUpUser(username, password, name)
         .then((userData) => {
+          setSnackbarSuccessMessage("Success in creating account. You have been logged in automatically.");
+          showSuccessfulSnackbar(true)
           setErrorMessage("");
           setShowLoginModal(false);
           setShowSignupPage(false); 
           dispatch(setReduxName(userData.name));
           dispatch(setUserId(userData.uid));
-          setSnackbarSuccessMessage("Success in creating account. You have been logged in automatically.");
         })
         .catch((error) => {
           setSnackbarSuccessMessage("");
-          setErrorMessage(error.message);
+          if (error.code === 'auth/email-already-in-use') {
+            setErrorMessage('An account associated with this email exists.')
+
+          }
+          else {
+            setErrorMessage(error.message);
+
+          }
           console.log(error);
         });
     }
@@ -212,7 +221,7 @@ const Dashboard = ({ history }) => {
                     onChange={(event) => setPassword(event.target.value)}
                   />
                   <Button
-                    sx={{ marginTop: 2 }}
+                    sx={{ marginTop: 2, backgroundColor: SECONDARY_COLOUR }}
                     variant="contained"
                     id="login-button"
                     type='submit'
@@ -254,6 +263,7 @@ const Dashboard = ({ history }) => {
               </Typography>
               <Button
                 variant="text"
+                sx={{ color: SECONDARY_COLOUR }}
                 onClick={() => {
                   setSnackbarSuccessMessage("");
                   setErrorMessage("");
@@ -300,7 +310,7 @@ const Dashboard = ({ history }) => {
                   onChange={(event) => setPassword(event.target.value)}
                 />
                 <Button
-                  sx={{ marginTop: 2 }}
+                  sx={{ marginTop: 2, backgroundColor: SECONDARY_COLOUR }}
                   variant="contained"
                   id="login-button"
                   type='submit'
