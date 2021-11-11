@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { fetchUserFavouritesInfo } from '../api/Meal';
 import { removeFromFavouriteFBStore } from "../api/User";
-import { FavouriteItem } from '../Components'
+import { FavouriteItem, LoadingHelmet } from '../Components'
 import styles from './MyFavourites.module.css'
 import { Helmet } from 'react-helmet'
 
@@ -49,16 +49,6 @@ class MyFavourites extends Component {
         </Helmet>
       )
     }
-
-
-    renderLoadingHelmet() {
-      return (
-        <Helmet>
-          <title>Loading...</title>
-        </Helmet>
-      )
-    }
-
 
     renderFavouriteContent() {
 
@@ -116,7 +106,7 @@ class MyFavourites extends Component {
       else {
         return (
           <div className={styles.favouritesLoadingContainer}>
-            {this.renderLoadingHelmet()}
+            <LoadingHelmet />
             <CircularProgress />
           </div>
         )

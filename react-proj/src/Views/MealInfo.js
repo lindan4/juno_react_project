@@ -7,6 +7,7 @@ import { addToFavouriteFBStore, removeFromFavouriteFBStore } from "../api/User";
 import _ from 'lodash'
 import styles from './MealInfo.module.css'
 import { Helmet } from "react-helmet";
+import { LoadingHelmet } from "../Components";
 
 class MealInfo extends Component {
   constructor(props) {
@@ -119,19 +120,11 @@ class MealInfo extends Component {
     )
   }
 
-  renderLoadingHelmet() {
-    return (
-      <Helmet>
-        <title>Loading...</title>
-      </Helmet>
-    )
-  }
-
   renderContent() {
     if (this.state.loading) {
       return (
         <div className={styles.mealInfoLoadingContainer}>
-              {this.renderLoadingHelmet()}
+              <LoadingHelmet />
               <CircularProgress />
         </div>
       )

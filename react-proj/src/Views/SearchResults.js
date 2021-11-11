@@ -1,7 +1,7 @@
 import { Grid, Typography, CircularProgress } from '@mui/material'
 import { Component } from 'react'
 import { fetchMeals } from '../api/Meal';
-import { RecipeItem, SearchBar } from '../Components'
+import { LoadingHelmet, RecipeItem, SearchBar } from '../Components'
 import { Helmet } from 'react-helmet'
 import styles from './SearchResults.module.css'
 
@@ -44,14 +44,6 @@ class SearchResults extends Component {
     }
   }
 
-  renderLoadingHelmet() {
-    return (
-      <Helmet>
-        <title>Loading...</title>
-      </Helmet>
-    )
-  }
-
   renderResultsHelmet() {
     return (
       <Helmet>
@@ -65,7 +57,7 @@ class SearchResults extends Component {
         return (
           <div
             className={styles.searchResultsLoadingContainer}>
-                {this.renderLoadingHelmet()}
+                <LoadingHelmet />
                 <CircularProgress />
           </div>
         );
