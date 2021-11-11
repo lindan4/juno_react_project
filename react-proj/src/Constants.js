@@ -11,3 +11,6 @@ export const PASSWORD_MISMATCH = 'non-matching-passwords'
 export const PASSWORDS_SAME = 'passwords-same'
 export const PASSWORD_CHANGE_ERROR = 'password-change-error'
 export const INVALID_CREDENTIALS = 'credentials-invalid'
+
+export const FB_EMAIL_IN_USE = 'auth/email-already-in-use'
+export const FB_WEAK_PASSWORD = 'auth/weak-password'

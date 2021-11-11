@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUser, logoutUser, signUpUser } from "../api/User";
 import { setReduxName, setUserId } from "../redux/UserSlice";
 import { useLocation } from 'react-router-dom'
-import { SECONDARY_COLOUR, CONTAINED_DIM_COLOUR } from "../Constants";
+import { SECONDARY_COLOUR, CONTAINED_DIM_COLOUR, FB_EMAIL_IN_USE, FB_WEAK_PASSWORD } from "../Constants";
 
 const Dashboard = ({ history }) => {
   const dispatch = useDispatch();
@@ -181,11 +181,11 @@ const Dashboard = ({ history }) => {
         })
         .catch((error) => {
           setSnackbarSuccessMessage("");
-          if (error.code === 'auth/email-already-in-use') {
+          if (error.code === FB_EMAIL_IN_USE) {
             setErrorMessage('An account associated with this email exists.')
 
           }
-          else if (error.code === 'auth/weak-password') {
+          else if (error.code === FB_WEAK_PASSWORD) {
             setErrorMessage('You password must be at least 6 characters.')
           }
           else {
