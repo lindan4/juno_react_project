@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/juno_react_project/static/css/main.a7ece151.chunk.css",
-    "main.js": "/juno_react_project/static/js/main.5ba75e89.chunk.js",
-    "main.js.map": "/juno_react_project/static/js/main.5ba75e89.chunk.js.map",
+    "main.js": "/juno_react_project/static/js/main.2d482da1.chunk.js",
+    "main.js.map": "/juno_react_project/static/js/main.2d482da1.chunk.js.map",
     "runtime-main.js": "/juno_react_project/static/js/runtime-main.8a8f444f.js",
     "runtime-main.js.map": "/juno_react_project/static/js/runtime-main.8a8f444f.js.map",
     "static/js/2.2c4312bb.chunk.js": "/juno_react_project/static/js/2.2c4312bb.chunk.js",
@@ -17,6 +17,6 @@
     "static/js/runtime-main.8a8f444f.js",
     "static/js/2.2c4312bb.chunk.js",
     "static/css/main.a7ece151.chunk.css",
-    "static/js/main.5ba75e89.chunk.js"
+    "static/js/main.2d482da1.chunk.js"
   ]
 }
