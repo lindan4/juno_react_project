@@ -1,5 +1,7 @@
 This project was made with the help of TheMealDB API for meal information. 
 
+Running instructions are below. The project can be run similarly to other React applications.
+
 ## Available Scripts
 
 In the project directory, you can run:
